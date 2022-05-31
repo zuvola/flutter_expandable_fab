@@ -13,11 +13,11 @@ https://docs.flutter.dev/cookbook/effects/expandable-fab
 
 ### Fan style
 
-<img src="https://github.com/zuvola/flutter_simple_calculator/blob/master/res/fan.gif?raw=true" width="320px"/>
+<img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/res/fan.gif?raw=true" width="320px"/>
 
 ### Vertical style
 
-<img src="https://github.com/zuvola/flutter_simple_calculator/blob/master/res/up.gif?raw=true" width="320px"/>
+<img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/res/up.gif?raw=true" width="320px"/>
 
 
 ## Getting started
