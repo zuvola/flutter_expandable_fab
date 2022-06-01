@@ -145,6 +145,7 @@ class _ExpandableFabState extends State<ExpandableFab>
       height: 56.0,
       child: Center(
         child: FloatingActionButton.small(
+          heroTag: null,
           foregroundColor: style.foregroundColor,
           backgroundColor: style.backgroundColor,
           onPressed: _toggle,
@@ -205,6 +206,7 @@ class _ExpandableFabState extends State<ExpandableFab>
           curve: const Interval(0.25, 1.0, curve: Curves.easeInOut),
           duration: duration,
           child: FloatingActionButton(
+            heroTag: null,
             foregroundColor: widget.foregroundColor,
             backgroundColor: widget.backgroundColor,
             onPressed: _toggle,

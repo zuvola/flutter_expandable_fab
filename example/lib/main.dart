@@ -32,14 +32,17 @@ class MyApp extends StatelessWidget {
           // ),
           children: [
             FloatingActionButton.small(
+              heroTag: null,
               child: const Icon(Icons.edit),
               onPressed: () {},
             ),
             FloatingActionButton.small(
+              heroTag: null,
               child: const Icon(Icons.search),
               onPressed: () {},
             ),
             FloatingActionButton.small(
+              heroTag: null,
               child: const Icon(Icons.share),
               onPressed: () {},
             ),
