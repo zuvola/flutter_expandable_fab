@@ -1,6 +1,7 @@
 library flutter_expandable_fab;
 
 import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,24 @@ import 'package:flutter/material.dart';
 
 /// The type of behavior of this widget.
 enum ExpandableFabType { fan, up, left }
+
+/// Style of the overlay.
+@immutable
+class ExpandableFabOverlayStyle {
+  ExpandableFabOverlayStyle({
+    this.color,
+    this.blur,
+  }) {
+    assert(color == null || blur == null);
+    assert(color != null || blur != null);
+  }
+
+  /// The color to paint behind the Fab.
+  final Color? color;
+
+  /// The strength of the blur behind Fab.
+  final double? blur;
+}
 
 /// Style of the close button.
 @immutable
@@ -45,6 +64,9 @@ class ExpandableFab extends StatefulWidget {
     this.child = const Icon(Icons.menu),
     this.childrenOffset = const Offset(8, 8),
     required this.children,
+    this.onOpen,
+    this.onClose,
+    this.overlayStyle,
   }) : super(key: key);
 
   /// Distance from children.
@@ -80,6 +102,15 @@ class ExpandableFab extends StatefulWidget {
   /// The button's background color.
   final Color? backgroundColor;
 
+  /// Execute when the menu opens.
+  final VoidCallback? onOpen;
+
+  /// Execute when the menu closes.
+  final VoidCallback? onClose;
+
+  /// Provides the style for overlay. No overlay when null.
+  final ExpandableFabOverlayStyle? overlayStyle;
+
   @override
   State<ExpandableFab> createState() => _ExpandableFabState();
 }
@@ -89,6 +120,7 @@ class _ExpandableFabState extends State<ExpandableFab>
   late final AnimationController _controller;
   late final Animation<double> _expandAnimation;
   bool _open = false;
+  OverlayEntry? _overlayEntry;
 
   @override
   void initState() {
@@ -104,20 +136,70 @@ class _ExpandableFabState extends State<ExpandableFab>
       reverseCurve: Curves.easeOutQuad,
       parent: _controller,
     );
+    _init();
+  }
+
+  @override
+  void reassemble() {
+    _overlayEntry?.remove();
+    _init();
+    super.reassemble();
+  }
+
+  void _init() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.duration = widget.duration;
+      const offset = Offset(-16, -16);
+      final blur = widget.overlayStyle?.blur;
+      final overlayColor = widget.overlayStyle?.color;
+      _overlayEntry = OverlayEntry(
+        builder: (context) => GestureDetector(
+          onTap: () => _toggle(),
+          child: Stack(
+            alignment: Alignment.bottomRight,
+            clipBehavior: Clip.none,
+            children: [
+              if (_open && blur != null)
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                  child: Container(color: Colors.transparent),
+                ),
+              if (_open && overlayColor != null)
+                Container(
+                  color: overlayColor,
+                ),
+              Transform.translate(
+                offset: offset,
+                child: _buildTapToCloseFab(),
+              ),
+              ..._buildExpandingActionButtons(offset),
+              Transform.translate(
+                offset: offset,
+                child: _buildTapToOpenFab(),
+              ),
+            ],
+          ),
+        ),
+      );
+      Overlay.of(context)?.insert(_overlayEntry!);
+    });
   }
 
   @override
   void dispose() {
+    _overlayEntry?.remove();
     _controller.dispose();
     super.dispose();
   }
 
   void _toggle() {
-    setState(() {
+    Overlay.of(context)?.setState(() {
       _open = !_open;
       if (_open) {
+        widget.onOpen?.call();
         _controller.forward();
       } else {
+        widget.onClose?.call();
         _controller.reverse();
       }
     });
@@ -125,17 +207,7 @@ class _ExpandableFabState extends State<ExpandableFab>
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
-      child: Stack(
-        alignment: Alignment.bottomRight,
-        clipBehavior: Clip.none,
-        children: [
-          _buildTapToCloseFab(),
-          ..._buildExpandingActionButtons(),
-          _buildTapToOpenFab(),
-        ],
-      ),
-    );
+    return const SizedBox.shrink();
   }
 
   Widget _buildTapToCloseFab() {
@@ -155,7 +227,7 @@ class _ExpandableFabState extends State<ExpandableFab>
     );
   }
 
-  List<Widget> _buildExpandingActionButtons() {
+  List<Widget> _buildExpandingActionButtons(Offset offset) {
     final children = <Widget>[];
     final count = widget.children.length;
     final step = widget.fanAngle / (count - 1);
@@ -180,7 +252,7 @@ class _ExpandableFabState extends State<ExpandableFab>
           directionInDegrees: dir + (90 - widget.fanAngle) / 2,
           maxDistance: dist,
           progress: _expandAnimation,
-          offset: widget.childrenOffset,
+          offset: widget.childrenOffset - offset,
           child: widget.children[i],
         ),
       );
