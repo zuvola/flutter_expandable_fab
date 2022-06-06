@@ -1,3 +1,7 @@
+## 1.2.0
+- Add overlay.
+- Add onOpen/onClose.
+  
 ## 1.1.0
 - Remove heroTag.
 

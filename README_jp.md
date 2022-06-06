@@ -11,14 +11,17 @@
 https://docs.flutter.dev/cookbook/effects/expandable-fab
 
 
-### Fan style
+### Fan style & Blur overlay
 
-<img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/res/fan.gif?raw=true" width="320px"/>
+<img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/example/ss/fan.gif?raw=true" width="320px"/>
 
-### Vertical style
+### Vertical style & Color overlay
 
-<img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/res/up.gif?raw=true" width="320px"/>
+<img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/example/ss/up.gif?raw=true" width="320px"/>
 
+### Horizontal style & Custom buttons
+
+<img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/example/ss/left.gif?raw=true" width="320px"/>
 
 ## Getting started
 
@@ -58,5 +61,8 @@ Scaffold(
 | children | 子アイテム |  |
 | foregroundColor | 子ウィジェットのフォアグラウンドカラー |  |
 | backgroundColor | ボタンの背景色 |  |
+| onOpen | メニューオープンイベントハンドラ |  |
+| onClose | メニュークローズイベントハンドラ |  |
+| overlayStyle | オーバーレイのスタイル、nullで非表示 |  |
 
 

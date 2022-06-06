@@ -1,6 +1,6 @@
 name: flutter_expandable_fab
 description: Fab button that can show/hide multiple action buttons with animation.
-version: 1.1.0
+version: 1.2.0
 homepage: https://github.com/zuvola/flutter_expandable_fab
 
 environment:

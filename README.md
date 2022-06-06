@@ -11,13 +11,17 @@ This is an extension of the code in this article.
 https://docs.flutter.dev/cookbook/effects/expandable-fab
 
 
-### Fan style
+### Fan style & Blur overlay
 
-<img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/res/fan.gif?raw=true" width="320px"/>
+<img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/example/ss/fan.gif?raw=true" width="320px"/>
 
-### Vertical style
+### Vertical style & Color overlay
 
-<img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/res/up.gif?raw=true" width="320px"/>
+<img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/example/ss/up.gif?raw=true" width="320px"/>
+
+### Horizontal style & Custom buttons
+
+<img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/example/ss/left.gif?raw=true" width="320px"/>
 
 
 ## Getting started
@@ -58,5 +62,9 @@ Scaffold(
 | children | The widgets below this widget in the tree |  |
 | foregroundColor | The default foreground color for icons and text within the button |  |
 | backgroundColor | The button's background color |  |
+| onOpen | Execute when the menu opens |  |
+| onClose | Execute when the menu closes |  |
+| overlayStyle | Provides the style for overlay. No overlay when null. |  |
+
 
 
