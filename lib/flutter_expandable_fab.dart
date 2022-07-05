@@ -158,14 +158,33 @@ class _ExpandableFabState extends State<ExpandableFab>
           alignment: Alignment.bottomRight,
           clipBehavior: Clip.none,
           children: [
-            if (_open && blur != null)
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-                child: Container(color: Colors.transparent),
+            if (blur != null)
+              IgnorePointer(
+                ignoring: !_open,
+                child: TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: 0.0, end: _open ? blur : 0.0),
+                  duration: widget.duration,
+                  curve: Curves.easeInOut,
+                  builder: (_, value, child) {
+                    return BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: value, sigmaY: value),
+                      child: child,
+                    );
+                  },
+                  child: Container(color: Colors.transparent),
+                ),
               ),
-            if (_open && overlayColor != null)
-              Container(
-                color: overlayColor,
+            if (overlayColor != null)
+              IgnorePointer(
+                ignoring: !_open,
+                child: AnimatedOpacity(
+                  duration: widget.duration,
+                  opacity: _open ? 1 : 0,
+                  curve: Curves.easeInOut,
+                  child: Container(
+                    color: overlayColor,
+                  ),
+                ),
               ),
             Transform.translate(
               offset: offset,
