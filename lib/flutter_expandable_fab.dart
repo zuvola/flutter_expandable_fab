@@ -147,40 +147,40 @@ class _ExpandableFabState extends State<ExpandableFab>
   }
 
   void _init() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _controller.duration = widget.duration;
-      const offset = Offset(-16, -16);
-      final blur = widget.overlayStyle?.blur;
-      final overlayColor = widget.overlayStyle?.color;
-      _overlayEntry = OverlayEntry(
-        builder: (context) => GestureDetector(
-          onTap: () => _toggle(),
-          child: Stack(
-            alignment: Alignment.bottomRight,
-            clipBehavior: Clip.none,
-            children: [
-              if (_open && blur != null)
-                BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-                  child: Container(color: Colors.transparent),
-                ),
-              if (_open && overlayColor != null)
-                Container(
-                  color: overlayColor,
-                ),
-              Transform.translate(
-                offset: offset,
-                child: _buildTapToCloseFab(),
+    _controller.duration = widget.duration;
+    const offset = Offset(-16, -16);
+    final blur = widget.overlayStyle?.blur;
+    final overlayColor = widget.overlayStyle?.color;
+    _overlayEntry = OverlayEntry(
+      builder: (context) => GestureDetector(
+        onTap: () => _toggle(),
+        child: Stack(
+          alignment: Alignment.bottomRight,
+          clipBehavior: Clip.none,
+          children: [
+            if (_open && blur != null)
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                child: Container(color: Colors.transparent),
               ),
-              ..._buildExpandingActionButtons(offset),
-              Transform.translate(
-                offset: offset,
-                child: _buildTapToOpenFab(),
+            if (_open && overlayColor != null)
+              Container(
+                color: overlayColor,
               ),
-            ],
-          ),
+            Transform.translate(
+              offset: offset,
+              child: _buildTapToCloseFab(),
+            ),
+            ..._buildExpandingActionButtons(offset),
+            Transform.translate(
+              offset: offset,
+              child: _buildTapToOpenFab(),
+            ),
+          ],
         ),
-      );
+      ),
+    );
+    Future.microtask(() {
       Overlay.of(context)?.insert(_overlayEntry!);
     });
   }
