@@ -1,3 +1,6 @@
+## 1.4.0
+- Add programmatic open/close.
+
 ## 1.3.0
 - Add overlay fade animation.
 

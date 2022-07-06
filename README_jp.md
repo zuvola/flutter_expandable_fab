@@ -6,7 +6,7 @@
 **[English](https://github.com/zuvola/flutter_expandable_fab/blob/master/README.md), [日本語](https://github.com/zuvola/flutter_expandable_fab/blob/master/README_jp.md)**
 
 
-`flutter_expandable_fab`は複数のアクションボタンをアニメーションで表示・非表示できるFabボタンです。  
+`flutter_expandable_fab`は複数のアクションボタンをアニメーションで表示・非表示できるスピードダイアルFABです。  
 こちらの記事のコードを拡張したものになります。  
 https://docs.flutter.dev/cookbook/effects/expandable-fab
 
@@ -38,6 +38,32 @@ Scaffold(
       FloatingActionButton.small(
         child: const Icon(Icons.search),
         onPressed: () {},
+      ),
+    ],
+  ),
+),
+
+```
+
+
+## Open/Close programmatically
+
+```dart
+final _key = GlobalKey<ExpandableFabState>();
+
+Scaffold(
+  floatingActionButton: ExpandableFab(
+    key: _key,
+    children: [
+      FloatingActionButton.small(
+        child: const Icon(Icons.edit),
+        onPressed: () {
+          final state = _key.currentState;
+          if (state != null) {
+            debugPrint('isOpen:${state.isOpen}');
+            state.toggle();
+          }
+        },
       ),
     ],
   ),

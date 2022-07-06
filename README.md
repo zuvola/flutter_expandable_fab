@@ -6,7 +6,7 @@
 **[English](https://github.com/zuvola/flutter_expandable_fab/blob/master/README.md), [日本語](https://github.com/zuvola/flutter_expandable_fab/blob/master/README_jp.md)**
 
 
-`flutter_expandable_fab` is the Fab button that can show/hide multiple action buttons with animation.  
+`flutter_expandable_fab` is the speed dial FAB that can show/hide multiple action buttons with animation.  
 This is an extension of the code in this article.  
 https://docs.flutter.dev/cookbook/effects/expandable-fab
 
@@ -39,6 +39,32 @@ Scaffold(
       FloatingActionButton.small(
         child: const Icon(Icons.search),
         onPressed: () {},
+      ),
+    ],
+  ),
+),
+
+```
+
+
+## Open/Close programmatically
+
+```dart
+final _key = GlobalKey<ExpandableFabState>();
+
+Scaffold(
+  floatingActionButton: ExpandableFab(
+    key: _key,
+    children: [
+      FloatingActionButton.small(
+        child: const Icon(Icons.edit),
+        onPressed: () {
+          final state = _key.currentState;
+          if (state != null) {
+            debugPrint('isOpen:${state.isOpen}');
+            state.toggle();
+          }
+        },
       ),
     ],
   ),
