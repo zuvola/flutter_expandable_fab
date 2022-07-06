@@ -112,15 +112,32 @@ class ExpandableFab extends StatefulWidget {
   final ExpandableFabOverlayStyle? overlayStyle;
 
   @override
-  State<ExpandableFab> createState() => _ExpandableFabState();
+  State<ExpandableFab> createState() => ExpandableFabState();
 }
 
-class _ExpandableFabState extends State<ExpandableFab>
+class ExpandableFabState extends State<ExpandableFab>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _expandAnimation;
   bool _open = false;
   OverlayEntry? _overlayEntry;
+
+  /// Returns whether the menu is open
+  bool get isOpen => _open;
+
+  /// Display or hide the menu.
+  void toggle() {
+    Overlay.of(context)?.setState(() {
+      _open = !_open;
+      if (_open) {
+        widget.onOpen?.call();
+        _controller.forward();
+      } else {
+        widget.onClose?.call();
+        _controller.reverse();
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -153,7 +170,7 @@ class _ExpandableFabState extends State<ExpandableFab>
     final overlayColor = widget.overlayStyle?.color;
     _overlayEntry = OverlayEntry(
       builder: (context) => GestureDetector(
-        onTap: () => _toggle(),
+        onTap: () => toggle(),
         child: Stack(
           alignment: Alignment.bottomRight,
           clipBehavior: Clip.none,
@@ -211,19 +228,6 @@ class _ExpandableFabState extends State<ExpandableFab>
     super.dispose();
   }
 
-  void _toggle() {
-    Overlay.of(context)?.setState(() {
-      _open = !_open;
-      if (_open) {
-        widget.onOpen?.call();
-        _controller.forward();
-      } else {
-        widget.onClose?.call();
-        _controller.reverse();
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return const SizedBox.shrink();
@@ -239,7 +243,7 @@ class _ExpandableFabState extends State<ExpandableFab>
           heroTag: null,
           foregroundColor: style.foregroundColor,
           backgroundColor: style.backgroundColor,
-          onPressed: _toggle,
+          onPressed: toggle,
           child: style.child,
         ),
       ),
@@ -300,7 +304,7 @@ class _ExpandableFabState extends State<ExpandableFab>
             heroTag: null,
             foregroundColor: widget.foregroundColor,
             backgroundColor: widget.backgroundColor,
-            onPressed: _toggle,
+            onPressed: toggle,
             child: AnimatedRotation(
               duration: duration,
               turns: _open ? -0.5 : 0,

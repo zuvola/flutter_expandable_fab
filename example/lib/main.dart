@@ -7,6 +7,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   final _counter = ValueNotifier(0);
+  final _key = GlobalKey<ExpandableFabState>();
 
   MyApp({Key? key}) : super(key: key);
 
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         floatingActionButton: ExpandableFab(
+          key: _key,
           // duration: const Duration(seconds: 1),
           // distance: 60.0,
           // type: ExpandableFabType.up,
@@ -74,7 +76,13 @@ class MyApp extends StatelessWidget {
             FloatingActionButton.small(
               heroTag: null,
               child: const Icon(Icons.share),
-              onPressed: () {},
+              onPressed: () {
+                final state = _key.currentState;
+                if (state != null) {
+                  debugPrint('isOpen:${state.isOpen}');
+                  state.toggle();
+                }
+              },
             ),
           ],
         ),
