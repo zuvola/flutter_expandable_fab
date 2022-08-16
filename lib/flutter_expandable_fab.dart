@@ -51,6 +51,8 @@ class ExpandableFabCloseButtonStyle {
 /// Fab button that can show/hide multiple action buttons with animation.
 @immutable
 class ExpandableFab extends StatefulWidget {
+  static final RouteObserver<PageRoute> routeObserver = RouteObserver();
+
   const ExpandableFab({
     Key? key,
     this.distance = 100,
@@ -116,7 +118,7 @@ class ExpandableFab extends StatefulWidget {
 }
 
 class ExpandableFabState extends State<ExpandableFab>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, RouteAware {
   late final AnimationController _controller;
   late final Animation<double> _expandAnimation;
   bool _open = false;
@@ -225,7 +227,27 @@ class ExpandableFabState extends State<ExpandableFab>
   void dispose() {
     _overlayEntry?.remove();
     _controller.dispose();
+    ExpandableFab.routeObserver.unsubscribe(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    ExpandableFab.routeObserver
+        .subscribe(this, ModalRoute.of(context) as PageRoute);
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didPushNext() {
+    _overlayEntry?.remove();
+    super.didPushNext();
+  }
+
+  @override
+  void didPopNext() {
+    Overlay.of(context)?.insert(_overlayEntry!);
+    super.didPopNext();
   }
 
   @override
