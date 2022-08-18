@@ -17,19 +17,18 @@ class MyApp extends StatelessWidget {
         colorSchemeSeed: Colors.blue,
       ),
       home: FirstPage(),
-      navigatorObservers: [ExpandableFab.routeObserver],
     );
   }
 }
 
 class FirstPage extends StatelessWidget {
   final _counter = ValueNotifier(0);
-  final _key = GlobalKey<ExpandableFabState>();
 
   FirstPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final key = GlobalObjectKey<ExpandableFabState>(context);
     return Scaffold(
       body: Center(
         child: Column(
@@ -55,8 +54,9 @@ class FirstPage extends StatelessWidget {
           ],
         ),
       ),
+      floatingActionButtonLocation: ExpandableFab.location,
       floatingActionButton: ExpandableFab(
-        key: _key,
+        key: key,
         // duration: const Duration(seconds: 1),
         // distance: 60.0,
         // type: ExpandableFabType.up,
@@ -91,7 +91,7 @@ class FirstPage extends StatelessWidget {
             heroTag: null,
             child: const Icon(Icons.share),
             onPressed: () {
-              final state = _key.currentState;
+              final state = key.currentState;
               if (state != null) {
                 debugPrint('isOpen:${state.isOpen}');
                 state.toggle();

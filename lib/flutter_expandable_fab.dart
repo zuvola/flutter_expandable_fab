@@ -48,10 +48,30 @@ class ExpandableFabCloseButtonStyle {
   final Color? backgroundColor;
 }
 
+class _ExpandableFabLocation extends StandardFabLocation {
+  final ValueNotifier<ScaffoldPrelayoutGeometry?> scaffoldGeometry =
+      ValueNotifier(null);
+
+  @override
+  double getOffsetX(
+      ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
+    Future.microtask(() {
+      this.scaffoldGeometry.value = scaffoldGeometry;
+    });
+    return 0;
+  }
+
+  @override
+  double getOffsetY(
+      ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
+    return 0;
+  }
+}
+
 /// Fab button that can show/hide multiple action buttons with animation.
 @immutable
 class ExpandableFab extends StatefulWidget {
-  static final RouteObserver<PageRoute> routeObserver = RouteObserver();
+  static final FloatingActionButtonLocation location = _ExpandableFabLocation();
 
   const ExpandableFab({
     Key? key,
@@ -64,7 +84,7 @@ class ExpandableFab extends StatefulWidget {
     this.foregroundColor,
     this.backgroundColor,
     this.child = const Icon(Icons.menu),
-    this.childrenOffset = const Offset(8, 8),
+    this.childrenOffset = const Offset(4, 4),
     required this.children,
     this.onOpen,
     this.onClose,
@@ -118,18 +138,17 @@ class ExpandableFab extends StatefulWidget {
 }
 
 class ExpandableFabState extends State<ExpandableFab>
-    with SingleTickerProviderStateMixin, RouteAware {
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _expandAnimation;
   bool _open = false;
-  OverlayEntry? _overlayEntry;
 
   /// Returns whether the menu is open
   bool get isOpen => _open;
 
   /// Display or hide the menu.
   void toggle() {
-    Overlay.of(context)?.setState(() {
+    setState(() {
       _open = !_open;
       if (_open) {
         widget.onOpen?.call();
@@ -155,120 +174,99 @@ class ExpandableFabState extends State<ExpandableFab>
       reverseCurve: Curves.easeOutQuad,
       parent: _controller,
     );
-    _init();
-  }
-
-  @override
-  void reassemble() {
-    _overlayEntry?.remove();
-    _init();
-    super.reassemble();
-  }
-
-  void _init() {
-    _controller.duration = widget.duration;
-    const offset = Offset(-16, -16);
-    final blur = widget.overlayStyle?.blur;
-    final overlayColor = widget.overlayStyle?.color;
-    _overlayEntry = OverlayEntry(
-      builder: (context) => GestureDetector(
-        onTap: () => toggle(),
-        child: Stack(
-          alignment: Alignment.bottomRight,
-          clipBehavior: Clip.none,
-          children: [
-            if (blur != null)
-              IgnorePointer(
-                ignoring: !_open,
-                child: TweenAnimationBuilder<double>(
-                  tween: Tween<double>(begin: 0.0, end: _open ? blur : 0.0),
-                  duration: widget.duration,
-                  curve: Curves.easeInOut,
-                  builder: (_, value, child) {
-                    return BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: value, sigmaY: value),
-                      child: child,
-                    );
-                  },
-                  child: Container(color: Colors.transparent),
-                ),
-              ),
-            if (overlayColor != null)
-              IgnorePointer(
-                ignoring: !_open,
-                child: AnimatedOpacity(
-                  duration: widget.duration,
-                  opacity: _open ? 1 : 0,
-                  curve: Curves.easeInOut,
-                  child: Container(
-                    color: overlayColor,
-                  ),
-                ),
-              ),
-            Transform.translate(
-              offset: offset,
-              child: _buildTapToCloseFab(),
-            ),
-            ..._buildExpandingActionButtons(offset),
-            Transform.translate(
-              offset: offset,
-              child: _buildTapToOpenFab(),
-            ),
-          ],
-        ),
-      ),
-    );
-    Future.microtask(() {
-      Overlay.of(context)?.insert(_overlayEntry!);
-    });
   }
 
   @override
   void dispose() {
-    _overlayEntry?.remove();
     _controller.dispose();
-    ExpandableFab.routeObserver.unsubscribe(this);
     super.dispose();
   }
 
   @override
-  void didChangeDependencies() {
-    ExpandableFab.routeObserver
-        .subscribe(this, ModalRoute.of(context) as PageRoute);
-    super.didChangeDependencies();
-  }
-
-  @override
-  void didPushNext() {
-    _overlayEntry?.remove();
-    super.didPushNext();
-  }
-
-  @override
-  void didPopNext() {
-    Overlay.of(context)?.insert(_overlayEntry!);
-    super.didPopNext();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return const SizedBox.shrink();
+    final location = ExpandableFab.location as _ExpandableFabLocation;
+    Offset? offset;
+    Widget? cache;
+    return ValueListenableBuilder<ScaffoldPrelayoutGeometry?>(
+      valueListenable: location.scaffoldGeometry,
+      builder: ((context, geometry, child) {
+        if (geometry == null) {
+          return const SizedBox.shrink();
+        }
+        final x = kFloatingActionButtonMargin + geometry.minInsets.right;
+        final bottomContentHeight =
+            geometry.scaffoldSize.height - geometry.contentBottom;
+        final y = kFloatingActionButtonMargin +
+            math.max(geometry.minViewPadding.bottom, bottomContentHeight);
+        if (offset != Offset(x, y)) {
+          offset = Offset(x, y);
+          cache = _buildButtons(offset!);
+        }
+        return cache!;
+      }),
+    );
+  }
+
+  Widget _buildButtons(Offset offset) {
+    final blur = widget.overlayStyle?.blur;
+    final overlayColor = widget.overlayStyle?.color;
+    return GestureDetector(
+      onTap: () => toggle(),
+      child: Stack(
+        alignment: Alignment.bottomRight,
+        children: [
+          if (blur != null)
+            IgnorePointer(
+              ignoring: !_open,
+              child: TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0.0, end: _open ? blur : 0.0),
+                duration: widget.duration,
+                curve: Curves.easeInOut,
+                builder: (_, value, child) {
+                  return BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: value, sigmaY: value),
+                    child: child,
+                  );
+                },
+                child: Container(color: Colors.transparent),
+              ),
+            ),
+          if (overlayColor != null)
+            IgnorePointer(
+              ignoring: !_open,
+              child: AnimatedOpacity(
+                duration: widget.duration,
+                opacity: _open ? 1 : 0,
+                curve: Curves.easeInOut,
+                child: Container(
+                  color: overlayColor,
+                ),
+              ),
+            ),
+          ..._buildExpandingActionButtons(offset),
+          Transform.translate(
+            offset: -offset,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                _buildTapToCloseFab(),
+                _buildTapToOpenFab(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildTapToCloseFab() {
     final style = widget.closeButtonStyle;
-    return SizedBox(
-      width: 56.0,
-      height: 56.0,
-      child: Center(
-        child: FloatingActionButton.small(
-          heroTag: null,
-          foregroundColor: style.foregroundColor,
-          backgroundColor: style.backgroundColor,
-          onPressed: toggle,
-          child: style.child,
-        ),
-      ),
+    return FloatingActionButton.small(
+      heroTag: null,
+      foregroundColor: style.foregroundColor,
+      backgroundColor: style.backgroundColor,
+      onPressed: toggle,
+      child: style.child,
     );
   }
 
@@ -297,7 +295,7 @@ class ExpandableFabState extends State<ExpandableFab>
           directionInDegrees: dir + (90 - widget.fanAngle) / 2,
           maxDistance: dist,
           progress: _expandAnimation,
-          offset: widget.childrenOffset - offset,
+          offset: offset + widget.childrenOffset,
           child: widget.children[i],
         ),
       );
