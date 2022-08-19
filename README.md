@@ -30,6 +30,7 @@ https://docs.flutter.dev/cookbook/effects/expandable-fab
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 
 Scaffold(
+  floatingActionButtonLocation: ExpandableFab.location,
   floatingActionButton: ExpandableFab(
     children: [
       FloatingActionButton.small(
@@ -53,6 +54,7 @@ Scaffold(
 final _key = GlobalKey<ExpandableFabState>();
 
 Scaffold(
+  floatingActionButtonLocation: ExpandableFab.location,
   floatingActionButton: ExpandableFab(
     key: _key,
     children: [

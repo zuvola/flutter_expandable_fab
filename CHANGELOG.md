@@ -1,3 +1,14 @@
+## 1.5.0
+- Fix issue with buttons not disappearing on Navigator push
+- Adjust button position.
+  
+#### `floatingActionButtonLocation` is now required.
+```dart
+Scaffold(
+  floatingActionButtonLocation: ExpandableFab.location,
+  ...
+```
+
 ## 1.4.0
 - Add programmatic open/close.
 
