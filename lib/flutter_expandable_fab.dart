@@ -215,6 +215,7 @@ class ExpandableFabState extends State<ExpandableFab>
       child: Stack(
         alignment: Alignment.bottomRight,
         children: [
+          Container(),
           if (blur != null)
             IgnorePointer(
               ignoring: !_open,
