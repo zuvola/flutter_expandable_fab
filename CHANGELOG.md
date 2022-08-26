@@ -1,8 +1,11 @@
+## 1.5.1
+- Fix issue with FAB not being displayed when overlayStyle is NULL.
+
 ## 1.5.0
 - Fix issue with buttons not disappearing on Navigator push
 - Adjust button position.
   
-#### `floatingActionButtonLocation` is now required.
+##### `floatingActionButtonLocation` is now required.
 ```dart
 Scaffold(
   floatingActionButtonLocation: ExpandableFab.location,
