@@ -224,6 +224,9 @@ class ExpandableFabState extends State<ExpandableFab>
                 duration: widget.duration,
                 curve: Curves.easeInOut,
                 builder: (_, value, child) {
+                  if (value < 0.001) {
+                    return child!;
+                  }
                   return BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: value, sigmaY: value),
                     child: child,
