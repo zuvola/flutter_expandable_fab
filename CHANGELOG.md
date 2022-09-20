@@ -1,3 +1,6 @@
+## 1.5.2
+- Fixed a bug with blur on the web.
+
 ## 1.5.1
 - Fix issue with FAB not being displayed when overlayStyle is NULL.
 
