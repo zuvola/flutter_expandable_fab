@@ -90,8 +90,10 @@ Scaffold(
 | children | The widgets below this widget in the tree |  |
 | foregroundColor | The default foreground color for icons and text within the button |  |
 | backgroundColor | The button's background color |  |
-| onOpen | Execute when the menu opens |  |
-| onClose | Execute when the menu closes |  |
+| beforeOpen | Will be called before opening the menu |  |
+| afterOpen | Will be called after opening the menu |  |
+| beforeClose | Will be called before the menu closes |  |
+| afterClose | Will be called after the menu closes |  |
 | overlayStyle | Provides the style for overlay. No overlay when null. |  |
 
 
