@@ -89,8 +89,10 @@ Scaffold(
 | children | 子アイテム |  |
 | foregroundColor | 子ウィジェットのフォアグラウンドカラー |  |
 | backgroundColor | ボタンの背景色 |  |
-| onOpen | メニューオープンイベントハンドラ |  |
-| onClose | メニュークローズイベントハンドラ |  |
+| onOpen | メニューを開く前に呼び出されます |  |
+| afterOpen | メニューを開いた後に呼び出されます |  |
+| onClose | メニューが閉じる前に呼び出されます |  |
+| afterClose | メニューが閉じた後に呼び出されます |  |
 | overlayStyle | オーバーレイのスタイル、nullで非表示 |  |
 
 
