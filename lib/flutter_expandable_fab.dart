@@ -87,7 +87,9 @@ class ExpandableFab extends StatefulWidget {
     this.childrenOffset = const Offset(4, 4),
     required this.children,
     this.onOpen,
+    this.afterOpen,
     this.onClose,
+    this.afterClose,
     this.overlayStyle,
   }) : super(key: key);
 
@@ -124,11 +126,17 @@ class ExpandableFab extends StatefulWidget {
   /// The button's background color.
   final Color? backgroundColor;
 
-  /// Execute when the menu opens.
+  /// Will be called before opening the menu.
   final VoidCallback? onOpen;
 
-  /// Execute when the menu closes.
+  /// Will be called after opening the menu.
+  final VoidCallback? afterOpen;
+
+  /// Will be called before the menu closes.
   final VoidCallback? onClose;
+
+  /// Will be called after the menu closes.
+  final VoidCallback? afterClose;
 
   /// Provides the style for overlay. No overlay when null.
   final ExpandableFabOverlayStyle? overlayStyle;
@@ -152,10 +160,14 @@ class ExpandableFabState extends State<ExpandableFab>
       _open = !_open;
       if (_open) {
         widget.onOpen?.call();
-        _controller.forward();
+        _controller.forward().then((value) {
+          widget.afterOpen?.call();
+        });
       } else {
         widget.onClose?.call();
-        _controller.reverse();
+        _controller.reverse().then((value) {
+          widget.afterClose?.call();
+        });
       }
     });
   }
