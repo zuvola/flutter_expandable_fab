@@ -1,3 +1,6 @@
+## 1.6.0
+- Added new event callbacks (afterOpen() / afterClose())
+
 ## 1.5.2
 - Fixed a bug with blur on the web.
 

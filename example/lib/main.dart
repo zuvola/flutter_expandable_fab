@@ -73,6 +73,18 @@ class FirstPage extends StatelessWidget {
           // color: Colors.black.withOpacity(0.5),
           blur: 5,
         ),
+        onOpen: () {
+          debugPrint('onOpen');
+        },
+        afterOpen: () {
+          debugPrint('afterOpen');
+        },
+        onClose: () {
+          debugPrint('onClose');
+        },
+        afterClose: () {
+          debugPrint('afterClose');
+        },
         children: [
           FloatingActionButton.small(
             heroTag: null,
