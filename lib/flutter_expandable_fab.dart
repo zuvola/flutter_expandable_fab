@@ -91,7 +91,11 @@ class ExpandableFab extends StatefulWidget {
     this.onClose,
     this.afterClose,
     this.overlayStyle,
+    this.heroTag,
   }) : super(key: key);
+
+  // Hero tag
+  final String? heroTag;
 
   /// Distance from children.
   final double distance;
@@ -278,7 +282,7 @@ class ExpandableFabState extends State<ExpandableFab>
   Widget _buildTapToCloseFab() {
     final style = widget.closeButtonStyle;
     return FloatingActionButton.small(
-      heroTag: null,
+      heroTag: widget.heroTag,
       foregroundColor: style.foregroundColor,
       backgroundColor: style.backgroundColor,
       onPressed: toggle,
@@ -337,7 +341,7 @@ class ExpandableFabState extends State<ExpandableFab>
           curve: const Interval(0.25, 1.0, curve: Curves.easeInOut),
           duration: duration,
           child: FloatingActionButton(
-            heroTag: null,
+            heroTag: widget.heroTag,
             foregroundColor: widget.foregroundColor,
             backgroundColor: widget.backgroundColor,
             onPressed: toggle,
