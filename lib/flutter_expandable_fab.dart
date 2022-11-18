@@ -49,12 +49,10 @@ class ExpandableFabCloseButtonStyle {
 }
 
 class _ExpandableFabLocation extends StandardFabLocation {
-  final ValueNotifier<ScaffoldPrelayoutGeometry?> scaffoldGeometry =
-      ValueNotifier(null);
+  final ValueNotifier<ScaffoldPrelayoutGeometry?> scaffoldGeometry = ValueNotifier(null);
 
   @override
-  double getOffsetX(
-      ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
+  double getOffsetX(ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
     Future.microtask(() {
       this.scaffoldGeometry.value = scaffoldGeometry;
     });
@@ -62,8 +60,7 @@ class _ExpandableFabLocation extends StandardFabLocation {
   }
 
   @override
-  double getOffsetY(
-      ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
+  double getOffsetY(ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
     return 0;
   }
 }
@@ -95,7 +92,7 @@ class ExpandableFab extends StatefulWidget {
   }) : super(key: key);
 
   // Hero tag
-  final String? heroTag;
+  final Object? heroTag;
 
   /// Distance from children.
   final double distance;
@@ -149,8 +146,7 @@ class ExpandableFab extends StatefulWidget {
   State<ExpandableFab> createState() => ExpandableFabState();
 }
 
-class ExpandableFabState extends State<ExpandableFab>
-    with SingleTickerProviderStateMixin {
+class ExpandableFabState extends State<ExpandableFab> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _expandAnimation;
   bool _open = false;
@@ -210,10 +206,8 @@ class ExpandableFabState extends State<ExpandableFab>
           return const SizedBox.shrink();
         }
         final x = kFloatingActionButtonMargin + geometry.minInsets.right;
-        final bottomContentHeight =
-            geometry.scaffoldSize.height - geometry.contentBottom;
-        final y = kFloatingActionButtonMargin +
-            math.max(geometry.minViewPadding.bottom, bottomContentHeight);
+        final bottomContentHeight = geometry.scaffoldSize.height - geometry.contentBottom;
+        final y = kFloatingActionButtonMargin + math.max(geometry.minViewPadding.bottom, bottomContentHeight);
         if (offset != Offset(x, y)) {
           offset = Offset(x, y);
           cache = _buildButtons(offset!);
@@ -282,7 +276,7 @@ class ExpandableFabState extends State<ExpandableFab>
   Widget _buildTapToCloseFab() {
     final style = widget.closeButtonStyle;
     return FloatingActionButton.small(
-      heroTag: widget.heroTag,
+      heroTag: widget.heroTag != null ? "${widget.heroTag!}_closeButton" : null,
       foregroundColor: style.foregroundColor,
       backgroundColor: style.backgroundColor,
       onPressed: toggle,
@@ -341,7 +335,7 @@ class ExpandableFabState extends State<ExpandableFab>
           curve: const Interval(0.25, 1.0, curve: Curves.easeInOut),
           duration: duration,
           child: FloatingActionButton(
-            heroTag: widget.heroTag,
+            heroTag: widget.heroTag != null ? "${widget.heroTag!}_openButton" : null,
             foregroundColor: widget.foregroundColor,
             backgroundColor: widget.backgroundColor,
             onPressed: toggle,
