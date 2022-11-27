@@ -1,3 +1,6 @@
+## 1.6.1
+- Added heroTag parameters.
+  
 ## 1.6.0
 - Added new event callbacks (afterOpen() / afterClose())
 

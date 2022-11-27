@@ -95,6 +95,5 @@ Scaffold(
 | onClose | Will be called before the menu closes |  |
 | afterClose | Will be called after the menu closes |  |
 | overlayStyle | Provides the style for overlay. No overlay when null. |  |
-
-
-
+| openButtonHeroTag | The tag to apply to the open button's [Hero] widget. |  |
+| closeButtonHeroTag | The tag to apply to the close button's [Hero] widget. |  |

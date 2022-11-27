@@ -94,5 +94,7 @@ Scaffold(
 | onClose | メニューが閉じる前に呼び出されます |  |
 | afterClose | メニューが閉じた後に呼び出されます |  |
 | overlayStyle | オーバーレイのスタイル、nullで非表示 |  |
+| openButtonHeroTag | 開くボタンの[Hero]ウィジェットに適用するタグ |  |
+| closeButtonHeroTag | 閉じるボタンの[Hero]ウィジェットに適用するタグ |  |
 
 
