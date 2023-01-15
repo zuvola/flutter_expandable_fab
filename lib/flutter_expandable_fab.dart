@@ -11,6 +11,9 @@ import 'package:flutter/material.dart';
 /// The type of behavior of this widget.
 enum ExpandableFabType { fan, up, left }
 
+/// The size of the expanded FAB.
+enum ExpandedFabSize { small, regular }
+
 /// Style of the overlay.
 @immutable
 class ExpandableFabOverlayStyle {
@@ -80,6 +83,7 @@ class ExpandableFab extends StatefulWidget {
     this.fanAngle = 90,
     this.initialOpen = false,
     this.type = ExpandableFabType.fan,
+    this.expandedFabSize = ExpandedFabSize.small,
     this.closeButtonStyle = const ExpandableFabCloseButtonStyle(),
     this.foregroundColor,
     this.backgroundColor,
@@ -109,6 +113,9 @@ class ExpandableFab extends StatefulWidget {
 
   /// The type of behavior of this widget.
   final ExpandableFabType type;
+
+  /// The size of the expanded FAB.
+  final ExpandedFabSize expandedFabSize;
 
   /// Style of the close button.
   final ExpandableFabCloseButtonStyle closeButtonStyle;
@@ -285,33 +292,45 @@ class ExpandableFabState extends State<ExpandableFab>
 
   Widget _buildTapToCloseFab() {
     final style = widget.closeButtonStyle;
-    return FloatingActionButton.small(
-      heroTag: widget.closeButtonHeroTag,
-      foregroundColor: style.foregroundColor,
-      backgroundColor: style.backgroundColor,
-      onPressed: toggle,
-      child: style.child,
-    );
+    switch (widget.expandedFabSize) {
+      case ExpandedFabSize.small:
+        return FloatingActionButton.small(
+          heroTag: widget.closeButtonHeroTag,
+          foregroundColor: style.foregroundColor,
+          backgroundColor: style.backgroundColor,
+          onPressed: toggle,
+          child: style.child,
+        );
+      case ExpandedFabSize.regular:
+        return FloatingActionButton(
+          heroTag: widget.closeButtonHeroTag,
+          foregroundColor: style.foregroundColor,
+          backgroundColor: style.backgroundColor,
+          onPressed: toggle,
+          child: style.child,
+        );
+    }
   }
 
   List<Widget> _buildExpandingActionButtons(Offset offset) {
     final children = <Widget>[];
     final count = widget.children.length;
     final step = widget.fanAngle / (count - 1);
+    final addedDistance = widget.expandedFabSize == ExpandedFabSize.regular ? 8 : 0;
     for (var i = 0; i < count; i++) {
       final double dir, dist;
       switch (widget.type) {
         case ExpandableFabType.fan:
           dir = step * i;
-          dist = widget.distance;
+          dist = widget.distance + addedDistance;
           break;
         case ExpandableFabType.up:
           dir = 90;
-          dist = widget.distance * (i + 1);
+          dist = widget.distance * (i + 1) + addedDistance;
           break;
         case ExpandableFabType.left:
           dir = 0;
-          dist = widget.distance * (i + 1);
+          dist = widget.distance * (i + 1) + addedDistance;
           break;
       }
       children.add(
@@ -333,11 +352,13 @@ class ExpandableFabState extends State<ExpandableFab>
       ignoring: _open,
       child: AnimatedContainer(
         transformAlignment: Alignment.center,
-        transform: Matrix4.diagonal3Values(
-          _open ? 0.7 : 1.0,
-          _open ? 0.7 : 1.0,
-          1.0,
-        ),
+        transform: widget.expandedFabSize == ExpandedFabSize.small
+            ? Matrix4.diagonal3Values(
+                _open ? 0.7 : 1.0,
+                _open ? 0.7 : 1.0,
+                1.0,
+              )
+            : null,
         duration: duration,
         curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
         child: AnimatedOpacity(
