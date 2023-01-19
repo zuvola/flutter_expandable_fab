@@ -1,3 +1,6 @@
+## 1.7.0
+- Allow changing the size of the FAB.
+  
 ## 1.6.1
 - Added heroTag parameters.
   

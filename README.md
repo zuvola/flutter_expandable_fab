@@ -97,3 +97,5 @@ Scaffold(
 | overlayStyle | Provides the style for overlay. No overlay when null. |  |
 | openButtonHeroTag | The tag to apply to the open button's [Hero] widget. |  |
 | closeButtonHeroTag | The tag to apply to the close button's [Hero] widget. |  |
+| collapsedFabSize | The size of the collapsed FAB. | regular |
+| expandedFabSize | The size of the expanded FAB. | small |
