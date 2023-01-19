@@ -11,6 +11,9 @@ import 'package:flutter/material.dart';
 /// The type of behavior of this widget.
 enum ExpandableFabType { fan, up, left }
 
+/// The size of the expanded FAB.
+enum ExpandableFabSize { small, regular }
+
 /// Style of the overlay.
 @immutable
 class ExpandableFabOverlayStyle {
@@ -80,6 +83,8 @@ class ExpandableFab extends StatefulWidget {
     this.fanAngle = 90,
     this.initialOpen = false,
     this.type = ExpandableFabType.fan,
+    this.collapsedFabSize = ExpandableFabSize.regular,
+    this.expandedFabSize = ExpandableFabSize.small,
     this.closeButtonStyle = const ExpandableFabCloseButtonStyle(),
     this.foregroundColor,
     this.backgroundColor,
@@ -109,6 +114,12 @@ class ExpandableFab extends StatefulWidget {
 
   /// The type of behavior of this widget.
   final ExpandableFabType type;
+
+  /// The size of the collapsed FAB.
+  final ExpandableFabSize collapsedFabSize;
+
+  /// The size of the expanded FAB.
+  final ExpandableFabSize expandedFabSize;
 
   /// Style of the close button.
   final ExpandableFabCloseButtonStyle closeButtonStyle;
@@ -285,33 +296,45 @@ class ExpandableFabState extends State<ExpandableFab>
 
   Widget _buildTapToCloseFab() {
     final style = widget.closeButtonStyle;
-    return FloatingActionButton.small(
-      heroTag: widget.closeButtonHeroTag,
-      foregroundColor: style.foregroundColor,
-      backgroundColor: style.backgroundColor,
-      onPressed: toggle,
-      child: style.child,
-    );
+    switch (widget.expandedFabSize) {
+      case ExpandableFabSize.small:
+        return FloatingActionButton.small(
+          heroTag: widget.closeButtonHeroTag,
+          foregroundColor: style.foregroundColor,
+          backgroundColor: style.backgroundColor,
+          onPressed: toggle,
+          child: style.child,
+        );
+      case ExpandableFabSize.regular:
+        return FloatingActionButton(
+          heroTag: widget.closeButtonHeroTag,
+          foregroundColor: style.foregroundColor,
+          backgroundColor: style.backgroundColor,
+          onPressed: toggle,
+          child: style.child,
+        );
+    }
   }
 
   List<Widget> _buildExpandingActionButtons(Offset offset) {
     final children = <Widget>[];
     final count = widget.children.length;
     final step = widget.fanAngle / (count - 1);
+    final addedDistance = widget.expandedFabSize == ExpandableFabSize.regular ? 8 : 0;
     for (var i = 0; i < count; i++) {
       final double dir, dist;
       switch (widget.type) {
         case ExpandableFabType.fan:
           dir = step * i;
-          dist = widget.distance;
+          dist = widget.distance + addedDistance;
           break;
         case ExpandableFabType.up:
           dir = 90;
-          dist = widget.distance * (i + 1);
+          dist = widget.distance * (i + 1) + addedDistance;
           break;
         case ExpandableFabType.left:
           dir = 0;
-          dist = widget.distance * (i + 1);
+          dist = widget.distance * (i + 1) + addedDistance;
           break;
       }
       children.add(
@@ -329,13 +352,15 @@ class ExpandableFabState extends State<ExpandableFab>
 
   Widget _buildTapToOpenFab() {
     final duration = widget.duration;
+    final transformValues = widget.expandedFabSize == ExpandableFabSize.regular ? 1.0 : 0.715;
+
     return IgnorePointer(
       ignoring: _open,
       child: AnimatedContainer(
         transformAlignment: Alignment.center,
         transform: Matrix4.diagonal3Values(
-          _open ? 0.7 : 1.0,
-          _open ? 0.7 : 1.0,
+          _open ? transformValues : 1.0,
+          _open ? transformValues : 1.0,
           1.0,
         ),
         duration: duration,
@@ -344,17 +369,29 @@ class ExpandableFabState extends State<ExpandableFab>
           opacity: _open ? 0.0 : 1.0,
           curve: const Interval(0.25, 1.0, curve: Curves.easeInOut),
           duration: duration,
-          child: FloatingActionButton(
-            heroTag: widget.openButtonHeroTag,
-            foregroundColor: widget.foregroundColor,
-            backgroundColor: widget.backgroundColor,
-            onPressed: toggle,
-            child: AnimatedRotation(
-              duration: duration,
-              turns: _open ? -0.5 : 0,
-              child: widget.child,
-            ),
-          ),
+          child: widget.collapsedFabSize == ExpandableFabSize.regular
+              ? FloatingActionButton(
+                  heroTag: widget.openButtonHeroTag,
+                  foregroundColor: widget.foregroundColor,
+                  backgroundColor: widget.backgroundColor,
+                  onPressed: toggle,
+                  child: AnimatedRotation(
+                    duration: duration,
+                    turns: _open ? -0.5 : 0,
+                    child: widget.child,
+                  ),
+                )
+              : FloatingActionButton.small(
+                  heroTag: widget.openButtonHeroTag,
+                  foregroundColor: widget.foregroundColor,
+                  backgroundColor: widget.backgroundColor,
+                  onPressed: toggle,
+                  child: AnimatedRotation(
+                    duration: duration,
+                    turns: _open ? -0.5 : 0,
+                    child: widget.child,
+                  ),
+                ),
         ),
       ),
     );
