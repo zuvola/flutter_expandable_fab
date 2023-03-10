@@ -1,3 +1,6 @@
+## 1.7.1
+- Fixed a issue when there is only one child.
+
 ## 1.7.0+1
 - Updated docs.
   

@@ -319,14 +319,17 @@ class ExpandableFabState extends State<ExpandableFab>
   List<Widget> _buildExpandingActionButtons(Offset offset) {
     final children = <Widget>[];
     final count = widget.children.length;
-    final step = widget.fanAngle / (count - 1);
     final addedDistance =
         widget.expandedFabSize == ExpandableFabSize.regular ? 8 : 0;
     for (var i = 0; i < count; i++) {
       final double dir, dist;
       switch (widget.type) {
         case ExpandableFabType.fan:
-          dir = step * i;
+          if (count > 1) {
+            dir = widget.fanAngle / (count - 1) * i;
+          } else {
+            dir = widget.fanAngle;
+          }
           dist = widget.distance + addedDistance;
           break;
         case ExpandableFabType.up:
