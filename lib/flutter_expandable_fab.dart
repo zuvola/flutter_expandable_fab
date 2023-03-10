@@ -320,7 +320,8 @@ class ExpandableFabState extends State<ExpandableFab>
     final children = <Widget>[];
     final count = widget.children.length;
     final step = widget.fanAngle / (count - 1);
-    final addedDistance = widget.expandedFabSize == ExpandableFabSize.regular ? 8 : 0;
+    final addedDistance =
+        widget.expandedFabSize == ExpandableFabSize.regular ? 8 : 0;
     for (var i = 0; i < count; i++) {
       final double dir, dist;
       switch (widget.type) {
@@ -352,7 +353,8 @@ class ExpandableFabState extends State<ExpandableFab>
 
   Widget _buildTapToOpenFab() {
     final duration = widget.duration;
-    final transformValues = widget.expandedFabSize == ExpandableFabSize.regular ? 1.0 : 0.715;
+    final transformValues =
+        widget.expandedFabSize == ExpandableFabSize.regular ? 1.0 : 0.715;
 
     return IgnorePointer(
       ignoring: _open,
