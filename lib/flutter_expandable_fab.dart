@@ -85,6 +85,8 @@ class ExpandableFab extends StatefulWidget {
     this.type = ExpandableFabType.fan,
     this.collapsedFabSize = ExpandableFabSize.regular,
     this.expandedFabSize = ExpandableFabSize.small,
+    this.collapsedFabShape,
+    this.expandedFabShape,
     this.closeButtonStyle = const ExpandableFabCloseButtonStyle(),
     this.foregroundColor,
     this.backgroundColor,
@@ -120,6 +122,12 @@ class ExpandableFab extends StatefulWidget {
 
   /// The size of the expanded FAB.
   final ExpandableFabSize expandedFabSize;
+
+  /// The shape of the expanded FAB's [Material].
+  final ShapeBorder? expandedFabShape;
+
+  /// The shape of the collapsed FAB's [Material].
+  final ShapeBorder? collapsedFabShape;
 
   /// Style of the close button.
   final ExpandableFabCloseButtonStyle closeButtonStyle;
@@ -302,6 +310,7 @@ class ExpandableFabState extends State<ExpandableFab>
           heroTag: widget.closeButtonHeroTag,
           foregroundColor: style.foregroundColor,
           backgroundColor: style.backgroundColor,
+          shape: widget.expandedFabShape,
           onPressed: toggle,
           child: style.child,
         );
@@ -310,6 +319,7 @@ class ExpandableFabState extends State<ExpandableFab>
           heroTag: widget.closeButtonHeroTag,
           foregroundColor: style.foregroundColor,
           backgroundColor: style.backgroundColor,
+          shape: widget.expandedFabShape,
           onPressed: toggle,
           child: style.child,
         );
@@ -379,6 +389,7 @@ class ExpandableFabState extends State<ExpandableFab>
                   heroTag: widget.openButtonHeroTag,
                   foregroundColor: widget.foregroundColor,
                   backgroundColor: widget.backgroundColor,
+                  shape: widget.collapsedFabShape,
                   onPressed: toggle,
                   child: AnimatedRotation(
                     duration: duration,
@@ -390,6 +401,7 @@ class ExpandableFabState extends State<ExpandableFab>
                   heroTag: widget.openButtonHeroTag,
                   foregroundColor: widget.foregroundColor,
                   backgroundColor: widget.backgroundColor,
+                  shape: widget.collapsedFabShape,
                   onPressed: toggle,
                   child: AnimatedRotation(
                     duration: duration,
