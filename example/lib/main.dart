@@ -69,6 +69,8 @@ class FirstPage extends StatelessWidget {
         //   foregroundColor: Colors.deepOrangeAccent,
         //   backgroundColor: Colors.lightGreen,
         // ),
+        // expandedFabShape: const CircleBorder(),
+        // collapsedFabShape: const CircleBorder(),
         overlayStyle: ExpandableFabOverlayStyle(
           // color: Colors.black.withOpacity(0.5),
           blur: 5,
@@ -87,11 +89,13 @@ class FirstPage extends StatelessWidget {
         },
         children: [
           FloatingActionButton.small(
+            // shape: const CircleBorder(),
             heroTag: null,
             child: const Icon(Icons.edit),
             onPressed: () {},
           ),
           FloatingActionButton.small(
+            // shape: const CircleBorder(),
             heroTag: null,
             child: const Icon(Icons.search),
             onPressed: () {
@@ -100,6 +104,7 @@ class FirstPage extends StatelessWidget {
             },
           ),
           FloatingActionButton.small(
+            // shape: const CircleBorder(),
             heroTag: null,
             child: const Icon(Icons.share),
             onPressed: () {
