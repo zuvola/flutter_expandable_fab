@@ -1,3 +1,6 @@
+## 1.8.0
+- Allow changing the shape of the FAB.
+  
 ## 1.7.1
 - Fixed a issue when there is only one child.
 

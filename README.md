@@ -101,3 +101,5 @@ Scaffold(
 | closeButtonHeroTag | The tag to apply to the close button's [Hero] widget. |  |
 | collapsedFabSize | The size of the collapsed FAB. | regular |
 | expandedFabSize | The size of the expanded FAB. | small |
+| expandedFabShape | The shape of the expanded FAB's |  |
+| collapsedFabShape | The shape of the collapsed FAB's |  |

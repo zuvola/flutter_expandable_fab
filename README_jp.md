@@ -100,3 +100,5 @@ Scaffold(
 | closeButtonHeroTag | 閉じるボタンの[Hero]ウィジェットに適用するタグ |  |
 | collapsedFabSize | 開くボタンの大きさ | regular |
 | expandedFabSize | 閉じるボタンの大きさ | small |
+| expandedFabShape | 開くボタンの形 |  |
+| collapsedFabShape | 閉じるボタンの形 |  |
