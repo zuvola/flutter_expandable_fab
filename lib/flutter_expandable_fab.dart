@@ -67,7 +67,7 @@ class _ExpandableFabLocation extends StandardFabLocation {
   @override
   double getOffsetY(
       ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
-    return 0;
+    return -scaffoldGeometry.snackBarSize.height;
   }
 }
 
