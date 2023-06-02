@@ -445,7 +445,10 @@ class _ExpandingActionButton extends StatelessWidget {
           bottom: offset.dy + pos.dy,
           child: Transform.rotate(
             angle: (1.0 - progress.value) * math.pi / 2,
-            child: child!,
+            child: IgnorePointer(
+              ignoring: progress.value != 1,
+              child: child,
+            ),
           ),
         );
       },
