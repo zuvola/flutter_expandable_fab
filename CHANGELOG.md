@@ -1,3 +1,7 @@
+## 1.8.1
+- Fixed overlap with snackbar.
+- Fixed onTap being executed with action button closed
+
 ## 1.8.0
 - Allow changing the shape of the FAB.
   
