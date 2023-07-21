@@ -4,15 +4,14 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-
-// Inspired by this article.
-// https://docs.flutter.dev/cookbook/effects/expandable-fab
+import 'src/action_button_builder.dart';
+export 'src/action_button_builder.dart';
 
 /// The type of behavior of this widget.
 enum ExpandableFabType { fan, up, left }
 
 /// The size of the expanded FAB.
-enum ExpandableFabSize { small, regular }
+enum ExpandableFabSize { small, regular, large }
 
 /// Style of the overlay.
 @immutable
@@ -30,25 +29,6 @@ class ExpandableFabOverlayStyle {
 
   /// The strength of the blur behind Fab.
   final double? blur;
-}
-
-/// Style of the close button.
-@immutable
-class ExpandableFabCloseButtonStyle {
-  const ExpandableFabCloseButtonStyle({
-    this.child = const Icon(Icons.close),
-    this.foregroundColor,
-    this.backgroundColor,
-  });
-
-  /// The widget below the close button widget in the tree.
-  final Widget child;
-
-  /// The default foreground color for icons and text within the button.
-  final Color? foregroundColor;
-
-  /// The button's background color.
-  final Color? backgroundColor;
 }
 
 class _ExpandableFabLocation extends StandardFabLocation {
@@ -83,13 +63,8 @@ class ExpandableFab extends StatefulWidget {
     this.fanAngle = 90,
     this.initialOpen = false,
     this.type = ExpandableFabType.fan,
-    this.collapsedFabSize = ExpandableFabSize.regular,
-    this.expandedFabSize = ExpandableFabSize.small,
-    this.collapsedFabShape,
-    this.expandedFabShape,
-    this.closeButtonStyle = const ExpandableFabCloseButtonStyle(),
-    this.foregroundColor,
-    this.backgroundColor,
+    this.closeButtonBuilder,
+    this.openButtonBuilder,
     this.child = const Icon(Icons.menu),
     this.childrenOffset = const Offset(4, 4),
     required this.children,
@@ -98,8 +73,6 @@ class ExpandableFab extends StatefulWidget {
     this.onClose,
     this.afterClose,
     this.overlayStyle,
-    this.openButtonHeroTag,
-    this.closeButtonHeroTag,
   }) : super(key: key);
 
   /// Distance from children.
@@ -117,20 +90,9 @@ class ExpandableFab extends StatefulWidget {
   /// The type of behavior of this widget.
   final ExpandableFabType type;
 
-  /// The size of the collapsed FAB.
-  final ExpandableFabSize collapsedFabSize;
-
-  /// The size of the expanded FAB.
-  final ExpandableFabSize expandedFabSize;
-
-  /// The shape of the expanded FAB's [Material].
-  final ShapeBorder? expandedFabShape;
-
-  /// The shape of the collapsed FAB's [Material].
-  final ShapeBorder? collapsedFabShape;
-
   /// Style of the close button.
-  final ExpandableFabCloseButtonStyle closeButtonStyle;
+  final FloatingActionButtonBuilder? closeButtonBuilder;
+  final FloatingActionButtonBuilder? openButtonBuilder;
 
   /// The widget below this widget in the tree.
   final Widget child;
@@ -140,12 +102,6 @@ class ExpandableFab extends StatefulWidget {
 
   /// The widgets below this widget in the tree.
   final List<Widget> children;
-
-  /// The default foreground color for icons and text within the button.
-  final Color? foregroundColor;
-
-  /// The button's background color.
-  final Color? backgroundColor;
 
   /// Will be called before opening the menu.
   final VoidCallback? onOpen;
@@ -162,12 +118,6 @@ class ExpandableFab extends StatefulWidget {
   /// Provides the style for overlay. No overlay when null.
   final ExpandableFabOverlayStyle? overlayStyle;
 
-  /// The tag to apply to the open button's [Hero] widget.
-  final Object? openButtonHeroTag;
-
-  /// The tag to apply to the close button's [Hero] widget.
-  final Object? closeButtonHeroTag;
-
   @override
   State<ExpandableFab> createState() => ExpandableFabState();
 }
@@ -176,6 +126,8 @@ class ExpandableFabState extends State<ExpandableFab>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _expandAnimation;
+  late final FloatingActionButtonBuilder _openButtonBuilder;
+  late final FloatingActionButtonBuilder _closeButtonBuilder;
   bool _open = false;
 
   /// Returns whether the menu is open
@@ -213,6 +165,16 @@ class ExpandableFabState extends State<ExpandableFab>
       reverseCurve: Curves.easeOutQuad,
       parent: _controller,
     );
+    _openButtonBuilder = widget.openButtonBuilder ??
+        RotateFloatingActionButtonBuilder(
+          child: const Icon(Icons.menu),
+          angle: math.pi / 2,
+        );
+    _closeButtonBuilder = widget.closeButtonBuilder ??
+        DefaultFloatingActionButtonBuilder(
+          size: ExpandableFabSize.small,
+          child: const Icon(Icons.close),
+        );
   }
 
   @override
@@ -292,7 +254,7 @@ class ExpandableFabState extends State<ExpandableFab>
             child: Stack(
               alignment: Alignment.center,
               children: [
-                _buildTapToCloseFab(),
+                _closeButtonBuilder.builder(context, toggle, _expandAnimation),
                 _buildTapToOpenFab(),
               ],
             ),
@@ -302,35 +264,11 @@ class ExpandableFabState extends State<ExpandableFab>
     );
   }
 
-  Widget _buildTapToCloseFab() {
-    final style = widget.closeButtonStyle;
-    switch (widget.expandedFabSize) {
-      case ExpandableFabSize.small:
-        return FloatingActionButton.small(
-          heroTag: widget.closeButtonHeroTag,
-          foregroundColor: style.foregroundColor,
-          backgroundColor: style.backgroundColor,
-          shape: widget.expandedFabShape,
-          onPressed: toggle,
-          child: style.child,
-        );
-      case ExpandableFabSize.regular:
-        return FloatingActionButton(
-          heroTag: widget.closeButtonHeroTag,
-          foregroundColor: style.foregroundColor,
-          backgroundColor: style.backgroundColor,
-          shape: widget.expandedFabShape,
-          onPressed: toggle,
-          child: style.child,
-        );
-    }
-  }
-
   List<Widget> _buildExpandingActionButtons(Offset offset) {
     final children = <Widget>[];
     final count = widget.children.length;
     final addedDistance =
-        widget.expandedFabSize == ExpandableFabSize.regular ? 8 : 0;
+        _closeButtonBuilder.size == ExpandableFabSize.regular ? 8 : 0;
     for (var i = 0; i < count; i++) {
       final double dir, dist;
       switch (widget.type) {
@@ -367,7 +305,7 @@ class ExpandableFabState extends State<ExpandableFab>
   Widget _buildTapToOpenFab() {
     final duration = widget.duration;
     final transformValues =
-        widget.expandedFabSize == ExpandableFabSize.regular ? 1.0 : 0.715;
+        _closeButtonBuilder.size == ExpandableFabSize.regular ? 1.0 : 0.715;
 
     return IgnorePointer(
       ignoring: _open,
@@ -384,31 +322,7 @@ class ExpandableFabState extends State<ExpandableFab>
           opacity: _open ? 0.0 : 1.0,
           curve: const Interval(0.25, 1.0, curve: Curves.easeInOut),
           duration: duration,
-          child: widget.collapsedFabSize == ExpandableFabSize.regular
-              ? FloatingActionButton(
-                  heroTag: widget.openButtonHeroTag,
-                  foregroundColor: widget.foregroundColor,
-                  backgroundColor: widget.backgroundColor,
-                  shape: widget.collapsedFabShape,
-                  onPressed: toggle,
-                  child: AnimatedRotation(
-                    duration: duration,
-                    turns: _open ? -0.5 : 0,
-                    child: widget.child,
-                  ),
-                )
-              : FloatingActionButton.small(
-                  heroTag: widget.openButtonHeroTag,
-                  foregroundColor: widget.foregroundColor,
-                  backgroundColor: widget.backgroundColor,
-                  shape: widget.collapsedFabShape,
-                  onPressed: toggle,
-                  child: AnimatedRotation(
-                    duration: duration,
-                    turns: _open ? -0.5 : 0,
-                    child: widget.child,
-                  ),
-                ),
+          child: _openButtonBuilder.builder(context, toggle, _expandAnimation),
         ),
       ),
     );

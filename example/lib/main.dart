@@ -71,6 +71,18 @@ class FirstPage extends StatelessWidget {
         // ),
         // expandedFabShape: const CircleBorder(),
         // collapsedFabShape: const CircleBorder(),
+        openButtonBuilder: RotateFloatingActionButtonBuilder(
+          child: const Icon(Icons.abc),
+          // size: ExpandableFabSize.large,
+          // shape: const CircleBorder(),
+          // angle: 3.14 / 2,
+        ),
+        closeButtonBuilder: RotateFloatingActionButtonBuilder(
+          child: const Icon(Icons.close),
+          size: ExpandableFabSize.small,
+          shape: const CircleBorder(),
+          // angle: 3.14 / 4,
+        ),
         overlayStyle: ExpandableFabOverlayStyle(
           // color: Colors.black.withOpacity(0.5),
           blur: 5,
