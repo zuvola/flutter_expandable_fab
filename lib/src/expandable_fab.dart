@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import '../flutter_expandable_fab.dart';
 
 /// The type of behavior of this widget.
-enum ExpandableFabType { fan, up, left }
+enum ExpandableFabType { fan, up, side }
+
+enum ExpandableFabPos { right, left }
 
 /// Style of the overlay.
 @immutable
@@ -58,6 +60,7 @@ class ExpandableFab extends StatefulWidget {
     this.fanAngle = 90,
     this.initialOpen = false,
     this.type = ExpandableFabType.fan,
+    this.pos = ExpandableFabPos.right,
     this.closeButtonBuilder,
     this.openButtonBuilder,
     this.child = const Icon(Icons.menu),
@@ -84,6 +87,8 @@ class ExpandableFab extends StatefulWidget {
 
   /// The type of behavior of this widget.
   final ExpandableFabType type;
+
+  final ExpandableFabPos pos;
 
   /// Style of the close button.
   final FloatingActionButtonBuilder? closeButtonBuilder;
@@ -188,7 +193,12 @@ class ExpandableFabState extends State<ExpandableFab>
         if (geometry == null) {
           return const SizedBox.shrink();
         }
-        final x = kFloatingActionButtonMargin + geometry.minInsets.right;
+        double x;
+        if (widget.pos == ExpandableFabPos.right) {
+          x = kFloatingActionButtonMargin + geometry.minInsets.right;
+        } else {
+          x = -kFloatingActionButtonMargin - geometry.minInsets.left;
+        }
         final bottomContentHeight =
             geometry.scaffoldSize.height - geometry.contentBottom;
         final y = kFloatingActionButtonMargin +
@@ -208,7 +218,9 @@ class ExpandableFabState extends State<ExpandableFab>
     return GestureDetector(
       onTap: () => toggle(),
       child: Stack(
-        alignment: Alignment.bottomRight,
+        alignment: widget.pos == ExpandableFabPos.right
+            ? Alignment.bottomRight
+            : Alignment.bottomLeft,
         children: [
           Container(),
           if (blur != null)
@@ -271,6 +283,13 @@ class ExpandableFabState extends State<ExpandableFab>
     if (_openButtonBuilder.size > _closeButtonBuilder.size) {
       buttonOffset = (_openButtonBuilder.size - _closeButtonBuilder.size) / 2;
     }
+    var totalOffset = offset;
+    if (widget.pos == ExpandableFabPos.right) {
+      totalOffset += widget.childrenOffset + Offset(buttonOffset, buttonOffset);
+    } else {
+      totalOffset += Offset(-widget.childrenOffset.dx - buttonOffset,
+          widget.childrenOffset.dy + buttonOffset);
+    }
     for (var i = 0; i < count; i++) {
       final double dir, dist;
       switch (widget.type) {
@@ -286,7 +305,7 @@ class ExpandableFabState extends State<ExpandableFab>
           dir = 90;
           dist = widget.distance * (i + 1);
           break;
-        case ExpandableFabType.left:
+        case ExpandableFabType.side:
           dir = 0;
           dist = widget.distance * (i + 1);
           break;
@@ -296,9 +315,8 @@ class ExpandableFabState extends State<ExpandableFab>
           directionInDegrees: dir + (90 - widget.fanAngle) / 2,
           maxDistance: dist,
           progress: _expandAnimation,
-          offset: offset +
-              widget.childrenOffset +
-              Offset(buttonOffset, buttonOffset),
+          offset: totalOffset,
+          fabPos: widget.pos,
           child: widget.children[i],
         ),
       );
@@ -339,6 +357,7 @@ class _ExpandingActionButton extends StatelessWidget {
     required this.maxDistance,
     required this.progress,
     required this.child,
+    required this.fabPos,
     required this.offset,
   });
 
@@ -346,6 +365,7 @@ class _ExpandingActionButton extends StatelessWidget {
   final double maxDistance;
   final Animation<double> progress;
   final Offset offset;
+  final ExpandableFabPos fabPos;
   final Widget child;
 
   @override
@@ -358,7 +378,8 @@ class _ExpandingActionButton extends StatelessWidget {
           progress.value * maxDistance,
         );
         return Positioned(
-          right: offset.dx + pos.dx,
+          right: fabPos == ExpandableFabPos.right ? offset.dx + pos.dx : null,
+          left: fabPos == ExpandableFabPos.right ? null : -offset.dx + pos.dx,
           bottom: offset.dy + pos.dy,
           child: Transform.rotate(
             angle: (1.0 - progress.value) * math.pi / 2,
