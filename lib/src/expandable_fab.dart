@@ -248,7 +248,13 @@ class ExpandableFabState extends State<ExpandableFab>
             child: Stack(
               alignment: Alignment.center,
               children: [
-                _closeButtonBuilder.builder(context, toggle, _expandAnimation),
+                AnimatedOpacity(
+                  opacity: _open ? 1.0 : 0.0,
+                  curve: const Interval(0.25, 1.0, curve: Curves.easeInOut),
+                  duration: widget.duration,
+                  child: _closeButtonBuilder.builder(
+                      context, toggle, _expandAnimation),
+                ),
                 _buildTapToOpenFab(),
               ],
             ),
@@ -261,8 +267,10 @@ class ExpandableFabState extends State<ExpandableFab>
   List<Widget> _buildExpandingActionButtons(Offset offset) {
     final children = <Widget>[];
     final count = widget.children.length;
-    final buttonOffset =
-        (_openButtonBuilder.size - _closeButtonBuilder.size).abs() / 2;
+    var buttonOffset = 0.0;
+    if (_openButtonBuilder.size > _closeButtonBuilder.size) {
+      buttonOffset = (_openButtonBuilder.size - _closeButtonBuilder.size) / 2;
+    }
     for (var i = 0; i < count; i++) {
       final double dir, dist;
       switch (widget.type) {
@@ -312,10 +320,10 @@ class ExpandableFabState extends State<ExpandableFab>
           1.0,
         ),
         duration: duration,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+        curve: const Interval(0.0, 1.0, curve: Curves.easeInOut),
         child: AnimatedOpacity(
           opacity: _open ? 0.0 : 1.0,
-          curve: const Interval(0.25, 1.0, curve: Curves.easeInOut),
+          curve: const Interval(0.0, 1.0, curve: Curves.easeInOut),
           duration: duration,
           child: _openButtonBuilder.builder(context, toggle, _expandAnimation),
         ),
