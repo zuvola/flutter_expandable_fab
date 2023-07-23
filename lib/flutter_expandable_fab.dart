@@ -14,6 +14,9 @@ enum ExpandableFabType { fan, up, left }
 /// The size of the expanded FAB.
 enum ExpandableFabSize { small, regular }
 
+/// position of the FAB
+enum ExpandableFabPosition { left, right }
+
 /// Style of the overlay.
 @immutable
 class ExpandableFabOverlayStyle {
@@ -100,6 +103,7 @@ class ExpandableFab extends StatefulWidget {
     this.overlayStyle,
     this.openButtonHeroTag,
     this.closeButtonHeroTag,
+    this.expandableFabPosition = ExpandableFabPosition.right,
   }) : super(key: key);
 
   /// Distance from children.
@@ -168,6 +172,9 @@ class ExpandableFab extends StatefulWidget {
   /// The tag to apply to the close button's [Hero] widget.
   final Object? closeButtonHeroTag;
 
+  /// The alignment of FAB
+  final ExpandableFabPosition? expandableFabPosition;
+
   @override
   State<ExpandableFab> createState() => ExpandableFabState();
 }
@@ -232,7 +239,10 @@ class ExpandableFabState extends State<ExpandableFab>
         if (geometry == null) {
           return const SizedBox.shrink();
         }
-        final x = kFloatingActionButtonMargin + geometry.minInsets.right;
+        final x = kFloatingActionButtonMargin +
+            (widget.expandableFabPosition == ExpandableFabPosition.right
+                ? geometry.minInsets.right
+                : geometry.minInsets.left);
         final bottomContentHeight =
             geometry.scaffoldSize.height - geometry.contentBottom;
         final y = kFloatingActionButtonMargin +
@@ -252,7 +262,9 @@ class ExpandableFabState extends State<ExpandableFab>
     return GestureDetector(
       onTap: () => toggle(),
       child: Stack(
-        alignment: Alignment.bottomRight,
+        alignment: widget.expandableFabPosition == ExpandableFabPosition.right
+            ? Alignment.bottomRight
+            : Alignment.bottomLeft,
         children: [
           Container(),
           if (blur != null)
@@ -288,7 +300,9 @@ class ExpandableFabState extends State<ExpandableFab>
             ),
           ..._buildExpandingActionButtons(offset),
           Transform.translate(
-            offset: -offset,
+            offset: widget.expandableFabPosition == ExpandableFabPosition.right
+                ? -offset
+                : -offset + Offset(offset.dx * 2, 0),
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -357,6 +371,8 @@ class ExpandableFabState extends State<ExpandableFab>
           maxDistance: dist,
           progress: _expandAnimation,
           offset: offset + widget.childrenOffset,
+          expandableFabPosition:
+              widget.expandableFabPosition ?? ExpandableFabPosition.right,
           child: widget.children[i],
         ),
       );
@@ -423,6 +439,7 @@ class _ExpandingActionButton extends StatelessWidget {
     required this.progress,
     required this.child,
     required this.offset,
+    required this.expandableFabPosition,
   });
 
   final double directionInDegrees;
@@ -430,9 +447,13 @@ class _ExpandingActionButton extends StatelessWidget {
   final Animation<double> progress;
   final Offset offset;
   final Widget child;
+  final ExpandableFabPosition expandableFabPosition;
 
   @override
   Widget build(BuildContext context) {
+    final rotateAngleDirection =
+        expandableFabPosition == ExpandableFabPosition.right ? 1 : -1;
+
     return AnimatedBuilder(
       animation: progress,
       builder: (context, child) {
@@ -441,10 +462,16 @@ class _ExpandingActionButton extends StatelessWidget {
           progress.value * maxDistance,
         );
         return Positioned(
-          right: offset.dx + pos.dx,
+          left: expandableFabPosition == ExpandableFabPosition.left
+              ? offset.dx + pos.dx
+              : null,
+          right: expandableFabPosition == ExpandableFabPosition.right
+              ? offset.dx + pos.dx
+              : null,
           bottom: offset.dy + pos.dy,
           child: Transform.rotate(
-            angle: (1.0 - progress.value) * math.pi / 2,
+            angle:
+                ((1.0 - progress.value) * math.pi / 2) * rotateAngleDirection,
             child: IgnorePointer(
               ignoring: progress.value != 1,
               child: child,
