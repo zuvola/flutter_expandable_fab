@@ -8,11 +8,18 @@ import '../flutter_expandable_fab.dart';
 /// The type of behavior of this widget.
 enum ExpandableFabType { fan, up, side }
 
+/// The position options for the FAB on the screen.
 enum ExpandableFabPos { right, left }
 
-/// Style of the overlay.
+/// Style configuration for the overlay displayed behind the Expandable FAB.
 @immutable
 class ExpandableFabOverlayStyle {
+  /// Creates an `ExpandableFabOverlayStyle` with the specified optional parameters.
+  ///
+  /// - [color]: The color to paint behind the FAB.
+  /// - [blur]: The strength of the blur behind the FAB.
+  ///
+  /// Only one of [color] or [blur] can be specified; both cannot be non-null at the same time.
   ExpandableFabOverlayStyle({
     this.color,
     this.blur,
@@ -28,29 +35,31 @@ class ExpandableFabOverlayStyle {
   final double? blur;
 }
 
-class _ExpandableFabLocation extends StandardFabLocation {
-  final ValueNotifier<ScaffoldPrelayoutGeometry?> scaffoldGeometry =
-      ValueNotifier(null);
-
-  @override
-  double getOffsetX(
-      ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
-    Future.microtask(() {
-      this.scaffoldGeometry.value = scaffoldGeometry;
-    });
-    return 0;
-  }
-
-  @override
-  double getOffsetY(
-      ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
-    return -scaffoldGeometry.snackBarSize.height;
-  }
-}
-
-/// Fab button that can show/hide multiple action buttons with animation.
+/// A FloatingActionButton that can show/hide multiple action buttons with animation.
+///
+/// ```dart
+/// Scaffold(
+///   floatingActionButtonLocation: ExpandableFab.location,
+///   floatingActionButton: ExpandableFab(
+///     children: [
+///       FloatingActionButton.small(
+///         heroTag: null,
+///         child: const Icon(Icons.edit),
+///         onPressed: () {},
+///       ),
+///       FloatingActionButton.small(
+///         heroTag: null,
+///         child: const Icon(Icons.search),
+///         onPressed: () {},
+///       ),
+///     ],
+///   ),
+/// );
+/// ```
+///
 @immutable
 class ExpandableFab extends StatefulWidget {
+  /// The location of the ExpandableFab on the screen.
   static final FloatingActionButtonLocation location = _ExpandableFabLocation();
 
   const ExpandableFab({
@@ -88,10 +97,13 @@ class ExpandableFab extends StatefulWidget {
   /// The type of behavior of this widget.
   final ExpandableFabType type;
 
+  /// The position of the ExpandableFab on the screen
   final ExpandableFabPos pos;
 
-  /// Style of the close button.
+  /// A builder for the custom close button.
   final FloatingActionButtonBuilder? closeButtonBuilder;
+
+  /// A builder for the custom open button.
   final FloatingActionButtonBuilder? openButtonBuilder;
 
   /// The widget below this widget in the tree.
@@ -347,6 +359,26 @@ class ExpandableFabState extends State<ExpandableFab>
         ),
       ),
     );
+  }
+}
+
+class _ExpandableFabLocation extends StandardFabLocation {
+  final ValueNotifier<ScaffoldPrelayoutGeometry?> scaffoldGeometry =
+      ValueNotifier(null);
+
+  @override
+  double getOffsetX(
+      ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
+    Future.microtask(() {
+      this.scaffoldGeometry.value = scaffoldGeometry;
+    });
+    return 0;
+  }
+
+  @override
+  double getOffsetY(
+      ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
+    return -scaffoldGeometry.snackBarSize.height;
   }
 }
 
