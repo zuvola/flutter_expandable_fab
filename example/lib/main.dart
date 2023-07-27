@@ -57,32 +57,33 @@ class FirstPage extends StatelessWidget {
       floatingActionButtonLocation: ExpandableFab.location,
       floatingActionButton: ExpandableFab(
         key: key,
-        // duration: const Duration(seconds: 1),
-        // distance: 60.0,
+        // duration: const Duration(milliseconds: 500),
+        // distance: 200.0,
         // type: ExpandableFabType.up,
-        // fanAngle: 70,
-        // child: const Icon(Icons.account_box),
-        // foregroundColor: Colors.amber,
-        // backgroundColor: Colors.green,
-        // closeButtonStyle: const ExpandableFabCloseButtonStyle(
-        //   child: Icon(Icons.abc),
-        //   foregroundColor: Colors.deepOrangeAccent,
-        //   backgroundColor: Colors.lightGreen,
+        // pos: ExpandableFabPos.left,
+        // childrenOffset: const Offset(0, 20),
+        // fanAngle: 40,
+        // openButtonBuilder: RotateFloatingActionButtonBuilder(
+        //   child: const Icon(Icons.abc),
+        //   fabSize: ExpandableFabSize.large,
+        //   foregroundColor: Colors.amber,
+        //   backgroundColor: Colors.green,
+        //   shape: const CircleBorder(),
+        //   angle: 3.14 * 2,
         // ),
-        // expandedFabShape: const CircleBorder(),
-        // collapsedFabShape: const CircleBorder(),
-        openButtonBuilder: RotateFloatingActionButtonBuilder(
-          child: const Icon(Icons.abc),
-          // size: ExpandableFabSize.large,
-          // shape: const CircleBorder(),
-          // angle: 3.14 / 2,
-        ),
-        closeButtonBuilder: RotateFloatingActionButtonBuilder(
-          child: const Icon(Icons.close),
-          size: ExpandableFabSize.small,
-          shape: const CircleBorder(),
-          // angle: 3.14 / 4,
-        ),
+        // closeButtonBuilder: FloatingActionButtonBuilder(
+        //   size: 56,
+        //   builder: (BuildContext context, void Function()? onPressed,
+        //       Animation<double> progress) {
+        //     return IconButton(
+        //       onPressed: onPressed,
+        //       icon: const Icon(
+        //         Icons.check_circle_outline,
+        //         size: 40,
+        //       ),
+        //     );
+        //   },
+        // ),
         overlayStyle: ExpandableFabOverlayStyle(
           // color: Colors.black.withOpacity(0.5),
           blur: 5,
