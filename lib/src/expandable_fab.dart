@@ -72,7 +72,6 @@ class ExpandableFab extends StatefulWidget {
     this.pos = ExpandableFabPos.right,
     this.closeButtonBuilder,
     this.openButtonBuilder,
-    this.child = const Icon(Icons.menu),
     this.childrenOffset = Offset.zero,
     required this.children,
     this.onOpen,
@@ -105,9 +104,6 @@ class ExpandableFab extends StatefulWidget {
 
   /// A builder for the custom open button.
   final FloatingActionButtonBuilder? openButtonBuilder;
-
-  /// The widget below this widget in the tree.
-  final Widget child;
 
   /// For positioning of children widgets.
   final Offset childrenOffset;
