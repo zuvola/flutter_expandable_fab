@@ -77,6 +77,7 @@ class DefaultFloatingActionButtonBuilder extends FloatingActionButtonBuilder {
                 func = FloatingActionButton.new;
             }
             return func.call(
+              autofocus: true,
               foregroundColor: foregroundColor,
               backgroundColor: backgroundColor,
               shape: shape,

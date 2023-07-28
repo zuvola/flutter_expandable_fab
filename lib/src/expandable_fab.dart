@@ -215,7 +215,7 @@ class ExpandableFabState extends State<ExpandableFab>
           offset = Offset(x, y);
           cache = _buildButtons(offset!);
         }
-        return cache!;
+        return _open ? FocusScope(child: cache!) : cache!;
       }),
     );
   }
