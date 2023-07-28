@@ -5,6 +5,8 @@ void main() {
   runApp(const MyApp());
 }
 
+final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -16,6 +18,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         colorSchemeSeed: Colors.blue,
       ),
+      scaffoldMessengerKey: scaffoldKey,
       home: FirstPage(),
     );
   }
@@ -105,7 +108,12 @@ class FirstPage extends StatelessWidget {
             // shape: const CircleBorder(),
             heroTag: null,
             child: const Icon(Icons.edit),
-            onPressed: () {},
+            onPressed: () {
+              const SnackBar snackBar = SnackBar(
+                content: Text("SnackBar"),
+              );
+              scaffoldKey.currentState?.showSnackBar(snackBar);
+            },
           ),
           FloatingActionButton.small(
             // shape: const CircleBorder(),

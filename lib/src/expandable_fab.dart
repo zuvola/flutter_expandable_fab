@@ -242,9 +242,11 @@ class ExpandableFabState extends State<ExpandableFab>
                   if (value < 0.001) {
                     return child!;
                   }
-                  return BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: value, sigmaY: value),
-                    child: child,
+                  return ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: value, sigmaY: value),
+                      child: child,
+                    ),
                   );
                 },
                 child: Container(color: Colors.transparent),
