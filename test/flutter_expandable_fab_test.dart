@@ -142,4 +142,50 @@ void main() {
     expect(br.dx.round(), 766.0);
     expect(br.dy.round(), 356.0);
   });
+
+  testWidgets('custom buttons', (WidgetTester tester) async {
+    const openButtonChild = Icon(Icons.abc);
+    const closeButtonIcon = Icon(Icons.check_circle_outline, size: 40);
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: Container(),
+        floatingActionButtonLocation: ExpandableFab.location,
+        floatingActionButton: ExpandableFab(
+          openButtonBuilder: RotateFloatingActionButtonBuilder(
+            child: openButtonChild,
+            fabSize: ExpandableFabSize.large,
+            foregroundColor: Colors.amber,
+            backgroundColor: Colors.green,
+            shape: const CircleBorder(),
+            angle: 3.14 * 2,
+          ),
+          closeButtonBuilder: FloatingActionButtonBuilder(
+            size: 56,
+            builder: (BuildContext context, void Function()? onPressed,
+                Animation<double> progress) {
+              return IconButton(
+                onPressed: onPressed,
+                icon: closeButtonIcon,
+              );
+            },
+          ),
+          children: [Container()],
+        ),
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 50));
+
+    final openFab =
+        tester.widget<FloatingActionButton>(find.byType(FloatingActionButton));
+    final closeFab = tester.widget<IconButton>(find.byType(IconButton));
+    expect(openFab, isNotNull);
+    expect(closeFab, isNotNull);
+
+    expect(openFab.child, openButtonChild);
+    expect(openFab.foregroundColor, Colors.amber);
+    expect(openFab.backgroundColor, Colors.green);
+    expect(openFab.shape, const CircleBorder());
+
+    expect(closeFab.icon, closeButtonIcon);
+  });
 }
