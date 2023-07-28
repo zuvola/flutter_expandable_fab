@@ -19,47 +19,62 @@ class MyApp extends StatelessWidget {
         colorSchemeSeed: Colors.blue,
       ),
       scaffoldMessengerKey: scaffoldKey,
-      home: FirstPage(),
+      home: const FirstPage(),
     );
   }
 }
 
-class FirstPage extends StatelessWidget {
+class CounterWidget extends StatelessWidget {
   final _counter = ValueNotifier(0);
 
-  FirstPage({Key? key}) : super(key: key);
+  CounterWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final key = GlobalObjectKey<ExpandableFabState>(context);
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            ValueListenableBuilder(
-              valueListenable: _counter,
-              builder: (context, counter, _) {
-                return Text(
-                  '$counter',
-                  style: Theme.of(context).textTheme.displayMedium,
-                );
-              },
-            ),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.add),
-              label: const Text('add'),
-              onPressed: () => _counter.value++,
-            ),
-          ],
-        ),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const Text(
+            'You have pushed the button this many times:',
+          ),
+          ValueListenableBuilder(
+            valueListenable: _counter,
+            builder: (context, counter, _) {
+              return Text(
+                '$counter',
+                style: Theme.of(context).textTheme.displayMedium,
+              );
+            },
+          ),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.add),
+            label: const Text('add'),
+            onPressed: () => _counter.value++,
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class FirstPage extends StatefulWidget {
+  const FirstPage({Key? key}) : super(key: key);
+
+  @override
+  State<FirstPage> createState() => _FirstPageState();
+}
+
+class _FirstPageState extends State<FirstPage> {
+  final _key = GlobalKey<ExpandableFabState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: CounterWidget(),
       floatingActionButtonLocation: ExpandableFab.location,
       floatingActionButton: ExpandableFab(
-        key: key,
+        key: _key,
         // duration: const Duration(milliseconds: 500),
         // distance: 200.0,
         // type: ExpandableFabType.up,
@@ -129,7 +144,7 @@ class FirstPage extends StatelessWidget {
             heroTag: null,
             child: const Icon(Icons.share),
             onPressed: () {
-              final state = key.currentState;
+              final state = _key.currentState;
               if (state != null) {
                 debugPrint('isOpen:${state.isOpen}');
                 state.toggle();

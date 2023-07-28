@@ -1,3 +1,12 @@
+## 2.0.0
+- Changed customization to a builder-based method.
+- Left-handed mode added.
+- Fixed some minor bugs.
+
+##### Braking changes: 
+Removed foregroundColor, backgroundColor, closeButtonStyle, expandedFabSize, and others.
+Use Default/RotateFloatingActionButtonBuilder or FloatingActionButtonBuilder instead.
+
 ## 1.8.1
 - Fixed overlap with snackbar.
 - Fixed onTap being executed with action button closed
