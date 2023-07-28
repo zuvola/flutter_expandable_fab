@@ -302,10 +302,11 @@ class ExpandableFabState extends State<ExpandableFab>
       final double dir, dist;
       switch (widget.type) {
         case ExpandableFabType.fan:
+          final half = (90 - widget.fanAngle) / 2;
           if (count > 1) {
-            dir = widget.fanAngle / (count - 1) * i;
+            dir = widget.fanAngle / (count - 1) * i + half;
           } else {
-            dir = widget.fanAngle;
+            dir = widget.fanAngle + half;
           }
           dist = widget.distance;
           break;
@@ -320,7 +321,7 @@ class ExpandableFabState extends State<ExpandableFab>
       }
       children.add(
         _ExpandingActionButton(
-          directionInDegrees: dir + (90 - widget.fanAngle) / 2,
+          directionInDegrees: dir,
           maxDistance: dist,
           progress: _expandAnimation,
           offset: totalOffset,
