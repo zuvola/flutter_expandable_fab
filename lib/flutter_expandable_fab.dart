@@ -17,6 +17,9 @@ enum ExpandableFabSize { small, regular }
 /// position of the FAB
 enum ExpandableFabPosition { left, right }
 
+/// The type of transformation
+enum ExpandableFabAnimation { rotate, expanded }
+
 /// Style of the overlay.
 @immutable
 class ExpandableFabOverlayStyle {
@@ -104,6 +107,7 @@ class ExpandableFab extends StatefulWidget {
     this.openButtonHeroTag,
     this.closeButtonHeroTag,
     this.expandableFabPosition = ExpandableFabPosition.right,
+    this.expandableFabAnimation = ExpandableFabAnimation.rotate,
   }) : super(key: key);
 
   /// Distance from children.
@@ -174,6 +178,9 @@ class ExpandableFab extends StatefulWidget {
 
   /// The alignment of FAB
   final ExpandableFabPosition? expandableFabPosition;
+
+  /// The type of transformation animation
+  final ExpandableFabAnimation expandableFabAnimation;
 
   @override
   State<ExpandableFab> createState() => ExpandableFabState();
@@ -373,6 +380,7 @@ class ExpandableFabState extends State<ExpandableFab>
           offset: offset + widget.childrenOffset,
           expandableFabPosition:
               widget.expandableFabPosition ?? ExpandableFabPosition.right,
+          expandableFabAnimation: widget.expandableFabAnimation,
           child: widget.children[i],
         ),
       );
@@ -440,6 +448,7 @@ class _ExpandingActionButton extends StatelessWidget {
     required this.child,
     required this.offset,
     required this.expandableFabPosition,
+    required this.expandableFabAnimation,
   });
 
   final double directionInDegrees;
@@ -448,6 +457,7 @@ class _ExpandingActionButton extends StatelessWidget {
   final Offset offset;
   final Widget child;
   final ExpandableFabPosition expandableFabPosition;
+  final ExpandableFabAnimation expandableFabAnimation;
 
   @override
   Widget build(BuildContext context) {
@@ -469,14 +479,23 @@ class _ExpandingActionButton extends StatelessWidget {
               ? offset.dx + pos.dx
               : null,
           bottom: offset.dy + pos.dy,
-          child: Transform.translate(
-            offset: const Offset(0, 1),
-            // ((1.0 - progress.value) * math.pi / 2) * rotateAngleDirection,
-            child: IgnorePointer(
-              ignoring: progress.value != 1,
-              child: child,
-            ),
-          ),
+          child: expandableFabAnimation == ExpandableFabAnimation.rotate
+              ? Transform.rotate(
+                  angle: ((1.0 - progress.value) * math.pi / 2) *
+                      rotateAngleDirection,
+                  child: IgnorePointer(
+                    ignoring: progress.value != 1,
+                    child: child,
+                  ),
+                )
+              : Transform.translate(
+                  offset: const Offset(0, 1),
+                  // ((1.0 - progress.value) * math.pi / 2) * rotateAngleDirection,
+                  child: IgnorePointer(
+                    ignoring: progress.value != 1,
+                    child: child,
+                  ),
+                ),
         );
       },
       child: FadeTransition(
