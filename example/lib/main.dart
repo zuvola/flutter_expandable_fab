@@ -80,6 +80,7 @@ class _FirstPageState extends State<FirstPage> {
         // type: ExpandableFabType.up,
         // pos: ExpandableFabPos.left,
         // childrenOffset: const Offset(0, 20),
+        // childrenAnimation: ExpandableFabAnimation.none,
         // fanAngle: 40,
         // openButtonBuilder: RotateFloatingActionButtonBuilder(
         //   child: const Icon(Icons.abc),

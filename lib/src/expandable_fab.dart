@@ -11,6 +11,9 @@ enum ExpandableFabType { fan, up, side }
 /// The position options for the FAB on the screen.
 enum ExpandableFabPos { right, left }
 
+/// Animation Type
+enum ExpandableFabAnimation { none, rotate }
+
 /// Style configuration for the overlay displayed behind the Expandable FAB.
 @immutable
 class ExpandableFabOverlayStyle {
@@ -70,6 +73,7 @@ class ExpandableFab extends StatefulWidget {
     this.initialOpen = false,
     this.type = ExpandableFabType.fan,
     this.pos = ExpandableFabPos.right,
+    this.childrenAnimation = ExpandableFabAnimation.rotate,
     this.closeButtonBuilder,
     this.openButtonBuilder,
     this.childrenOffset = Offset.zero,
@@ -104,6 +108,9 @@ class ExpandableFab extends StatefulWidget {
 
   /// A builder for the custom open button.
   final FloatingActionButtonBuilder? openButtonBuilder;
+
+  /// Types of animations for Children
+  final ExpandableFabAnimation childrenAnimation;
 
   /// For positioning of children widgets.
   final Offset childrenOffset;
@@ -326,6 +333,7 @@ class ExpandableFabState extends State<ExpandableFab>
           progress: _expandAnimation,
           offset: totalOffset,
           fabPos: widget.pos,
+          animation: widget.childrenAnimation,
           child: widget.children[i],
         ),
       );
@@ -335,14 +343,14 @@ class ExpandableFabState extends State<ExpandableFab>
 
   Widget _buildTapToOpenFab() {
     final transformValues = _closeButtonBuilder.size / _openButtonBuilder.size;
-    final anim = ReverseAnimation(_expandAnimation);
+    final reverse = ReverseAnimation(_expandAnimation);
 
     return IgnorePointer(
       ignoring: _open,
       child: ScaleTransition(
-        scale: Tween(begin: transformValues, end: 1.0).animate(anim),
+        scale: Tween(begin: transformValues, end: 1.0).animate(reverse),
         child: FadeTransition(
-          opacity: anim,
+          opacity: reverse,
           child: _openButtonBuilder.builder(context, toggle, _expandAnimation),
         ),
       ),
@@ -379,6 +387,7 @@ class _ExpandingActionButton extends StatelessWidget {
     required this.child,
     required this.fabPos,
     required this.offset,
+    required this.animation,
   });
 
   final double directionInDegrees;
@@ -387,6 +396,7 @@ class _ExpandingActionButton extends StatelessWidget {
   final Offset offset;
   final ExpandableFabPos fabPos;
   final Widget child;
+  final ExpandableFabAnimation animation;
 
   @override
   Widget build(BuildContext context) {
@@ -402,7 +412,9 @@ class _ExpandingActionButton extends StatelessWidget {
           left: fabPos == ExpandableFabPos.right ? null : -offset.dx + pos.dx,
           bottom: offset.dy + pos.dy,
           child: Transform.rotate(
-            angle: (1.0 - progress.value) * math.pi / 2,
+            angle: animation == ExpandableFabAnimation.rotate
+                ? (1.0 - progress.value) * math.pi / 2
+                : 0,
             child: IgnorePointer(
               ignoring: progress.value != 1,
               child: child,
