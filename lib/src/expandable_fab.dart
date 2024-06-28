@@ -139,10 +139,20 @@ class ExpandableFab extends StatefulWidget {
 
 class ExpandableFabState extends State<ExpandableFab>
     with SingleTickerProviderStateMixin {
+  final _defaultOpenButtonBuilder = RotateFloatingActionButtonBuilder(
+    child: const Icon(Icons.menu),
+  );
+  final _defaultCloseButtonBuilder = DefaultFloatingActionButtonBuilder(
+    fabSize: ExpandableFabSize.small,
+    child: const Icon(Icons.close),
+  );
+
   late final AnimationController _controller;
   late final Animation<double> _expandAnimation;
-  late final FloatingActionButtonBuilder _openButtonBuilder;
-  late final FloatingActionButtonBuilder _closeButtonBuilder;
+  late FloatingActionButtonBuilder _openButtonBuilder =
+      _defaultOpenButtonBuilder;
+  late FloatingActionButtonBuilder _closeButtonBuilder =
+      _defaultCloseButtonBuilder;
   bool _open = false;
 
   /// Returns whether the menu is open
@@ -180,15 +190,22 @@ class ExpandableFabState extends State<ExpandableFab>
       reverseCurve: Curves.easeOutQuad,
       parent: _controller,
     );
-    _openButtonBuilder = widget.openButtonBuilder ??
-        RotateFloatingActionButtonBuilder(
-          child: const Icon(Icons.menu),
-        );
-    _closeButtonBuilder = widget.closeButtonBuilder ??
-        DefaultFloatingActionButtonBuilder(
-          fabSize: ExpandableFabSize.small,
-          child: const Icon(Icons.close),
-        );
+    if (widget.openButtonBuilder != null) {
+      _openButtonBuilder = widget.openButtonBuilder!;
+    }
+    if (widget.closeButtonBuilder != null) {
+      _closeButtonBuilder = widget.closeButtonBuilder!;
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant ExpandableFab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _open = widget.initialOpen;
+    _controller.duration = widget.duration;
+    _openButtonBuilder = widget.openButtonBuilder ?? _defaultOpenButtonBuilder;
+    _closeButtonBuilder =
+        widget.closeButtonBuilder ?? _defaultCloseButtonBuilder;
   }
 
   @override
