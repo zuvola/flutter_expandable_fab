@@ -279,10 +279,8 @@ class ExpandableFabState extends State<ExpandableFab>
           if (overlayColor != null)
             IgnorePointer(
               ignoring: !_open,
-              child: AnimatedOpacity(
-                duration: widget.duration,
-                opacity: _open ? 1 : 0,
-                curve: Curves.easeInOut,
+              child: FadeTransition(
+                opacity: _expandAnimation,
                 child: Container(
                   color: overlayColor,
                 ),
