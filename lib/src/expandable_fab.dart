@@ -270,10 +270,8 @@ class ExpandableFabState extends State<ExpandableFab>
             child: Stack(
               alignment: Alignment.center,
               children: [
-                AnimatedOpacity(
-                  opacity: _open ? 1.0 : 0.0,
-                  curve: const Interval(0.25, 1.0, curve: Curves.easeInOut),
-                  duration: widget.duration,
+                FadeTransition(
+                  opacity: _expandAnimation,
                   child: _closeButtonBuilder.builder(
                       context, toggle, _expandAnimation),
                 ),
@@ -336,24 +334,15 @@ class ExpandableFabState extends State<ExpandableFab>
   }
 
   Widget _buildTapToOpenFab() {
-    final duration = widget.duration;
     final transformValues = _closeButtonBuilder.size / _openButtonBuilder.size;
+    final anim = ReverseAnimation(_expandAnimation);
 
     return IgnorePointer(
       ignoring: _open,
-      child: AnimatedContainer(
-        transformAlignment: Alignment.center,
-        transform: Matrix4.diagonal3Values(
-          _open ? transformValues : 1.0,
-          _open ? transformValues : 1.0,
-          1.0,
-        ),
-        duration: duration,
-        curve: const Interval(0.0, 1.0, curve: Curves.easeInOut),
-        child: AnimatedOpacity(
-          opacity: _open ? 0.0 : 1.0,
-          curve: const Interval(0.0, 1.0, curve: Curves.easeInOut),
-          duration: duration,
+      child: ScaleTransition(
+        scale: Tween(begin: transformValues, end: 1.0).animate(anim),
+        child: FadeTransition(
+          opacity: anim,
           child: _openButtonBuilder.builder(context, toggle, _expandAnimation),
         ),
       ),
