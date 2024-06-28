@@ -175,6 +175,62 @@ ExpandableFab(
 )
 ```
 
+`children`はWidgetの配列なのでFloatingActionButtonに限らずお好みのWidgetを配置していただいて構いません。  
+下記のようにすればラベル付きのボタンなども作成できます。
+
+<img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/example/ss/sample.gif?raw=true" width="320px"/>
+
+```dart
+floatingActionButton: ExpandableFab(
+  key: _key,
+  type: ExpandableFabType.up,
+  childrenAnimation: ExpandableFabAnimation.none,
+  distance: 70,
+  overlayStyle: ExpandableFabOverlayStyle(
+    color: Colors.white.withOpacity(0.9),
+  ),
+  children: const [
+    Row(
+      children: [
+        Text('Remind'),
+        SizedBox(width: 20),
+        FloatingActionButton.small(
+          heroTag: null,
+          onPressed: null,
+          child: Icon(Icons.notifications),
+        ),
+      ],
+    ),
+    Row(
+      children: [
+        Text('Email'),
+        SizedBox(width: 20),
+        FloatingActionButton.small(
+          heroTag: null,
+          onPressed: null,
+          child: Icon(Icons.email),
+        ),
+      ],
+    ),
+    Row(
+      children: [
+        Text('Star'),
+        SizedBox(width: 20),
+        FloatingActionButton.small(
+          heroTag: null,
+          onPressed: null,
+          child: Icon(Icons.star),
+        ),
+      ],
+    ),
+    FloatingActionButton.small(
+      heroTag: null,
+      onPressed: null,
+      child: Icon(Icons.add),
+    ),
+  ],
+),
+```
 
 ## Properties
 
@@ -190,6 +246,7 @@ ExpandableFab(
 | closeButtonBuilder | 閉じるボタンBuilder |  |
 | openButtonBuilder | 開くボタンBuilder |  |
 | childrenOffset | 子アイテムの位置調整 | 0 |
+| childrenAnimation | 小アイテムのアニメーションの種類 | rotate |
 | children | 子アイテム |  |
 | onOpen | メニューを開く前に呼び出されます |  |
 | afterOpen | メニューを開いた後に呼び出されます |  |

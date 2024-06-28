@@ -106,7 +106,7 @@ class ExpandableFab extends StatefulWidget {
   /// A builder for the custom open button.
   final FloatingActionButtonBuilder? openButtonBuilder;
 
-  /// Types of animations for Children
+  /// Types of animations for Children.
   final ExpandableFabAnimation childrenAnimation;
 
   /// For positioning of children widgets.

@@ -1,3 +1,9 @@
+## 2.1.0
+- Allows children's animations to be changed.
+- Fixed animation issues.
+- Fixed issue with some properties not being reflected when hot reloading.
+- overlayStyle supports setting both color and blur.
+
 ## 2.0.0
 - Changed customization to a builder-based method.
 - Left-handed mode added.

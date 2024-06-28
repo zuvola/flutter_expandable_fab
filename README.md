@@ -174,6 +174,64 @@ ExpandableFab(
 ```
 
 
+Since `children` is an array of widgets, you can place any widget you like, not limited to FloatingActionButton.  
+You can also create buttons with labels as shown below.
+
+<img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/example/ss/sample.gif?raw=true" width="320px"/>
+
+```dart
+floatingActionButton: ExpandableFab(
+  key: _key,
+  type: ExpandableFabType.up,
+  childrenAnimation: ExpandableFabAnimation.none,
+  distance: 70,
+  overlayStyle: ExpandableFabOverlayStyle(
+    color: Colors.white.withOpacity(0.9),
+  ),
+  children: const [
+    Row(
+      children: [
+        Text('Remind'),
+        SizedBox(width: 20),
+        FloatingActionButton.small(
+          heroTag: null,
+          onPressed: null,
+          child: Icon(Icons.notifications),
+        ),
+      ],
+    ),
+    Row(
+      children: [
+        Text('Email'),
+        SizedBox(width: 20),
+        FloatingActionButton.small(
+          heroTag: null,
+          onPressed: null,
+          child: Icon(Icons.email),
+        ),
+      ],
+    ),
+    Row(
+      children: [
+        Text('Star'),
+        SizedBox(width: 20),
+        FloatingActionButton.small(
+          heroTag: null,
+          onPressed: null,
+          child: Icon(Icons.star),
+        ),
+      ],
+    ),
+    FloatingActionButton.small(
+      heroTag: null,
+      onPressed: null,
+      child: Icon(Icons.add),
+    ),
+  ],
+),
+```
+
+
 ## Properties
 
 ### ExpandableFab
@@ -188,6 +246,7 @@ ExpandableFab(
 | closeButtonBuilder | Builder for the close button |  |
 | openButtonBuilder | Builder for the open button |  |
 | childrenOffset | For positioning of children widgets |  |
+| childrenAnimation | Types of animations for Children | rotate |
 | children | The widgets below this widget in the tree |  |
 | onOpen | Will be called before opening the menu |  |
 | afterOpen | Will be called after opening the menu |  |
