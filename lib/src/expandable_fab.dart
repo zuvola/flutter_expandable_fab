@@ -63,7 +63,7 @@ class ExpandableFab extends StatefulWidget {
   static final FloatingActionButtonLocation location = _ExpandableFabLocation();
 
   const ExpandableFab({
-    Key? key,
+    super.key,
     this.distance = 100,
     this.duration = const Duration(milliseconds: 250),
     this.fanAngle = 90,
@@ -79,7 +79,7 @@ class ExpandableFab extends StatefulWidget {
     this.onClose,
     this.afterClose,
     this.overlayStyle,
-  }) : super(key: key);
+  });
 
   /// Distance from children.
   final double distance;
