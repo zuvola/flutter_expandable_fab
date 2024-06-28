@@ -23,13 +23,10 @@ class ExpandableFabOverlayStyle {
   /// - [blur]: The strength of the blur behind the FAB.
   ///
   /// Only one of [color] or [blur] can be specified; both cannot be non-null at the same time.
-  ExpandableFabOverlayStyle({
+  const ExpandableFabOverlayStyle({
     this.color,
     this.blur,
-  }) {
-    assert(color == null || blur == null);
-    assert(color != null || blur != null);
-  }
+  });
 
   /// The color to paint behind the Fab.
   final Color? color;
@@ -255,11 +252,24 @@ class ExpandableFabState extends State<ExpandableFab>
             : Alignment.bottomLeft,
         children: [
           Container(),
+          if (overlayColor != null)
+            IgnorePointer(
+              ignoring: !_open,
+              child: FadeTransition(
+                opacity: _expandAnimation,
+                child: Container(
+                  color: overlayColor,
+                ),
+              ),
+            ),
           if (blur != null)
             IgnorePointer(
               ignoring: !_open,
               child: TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0.0, end: _open ? blur : 0.0),
+                tween: Tween<double>(
+                  begin: _open ? 0.0 : blur,
+                  end: _open ? blur : 0.0,
+                ),
                 duration: widget.duration,
                 curve: Curves.easeInOut,
                 builder: (_, value, child) {
@@ -274,16 +284,6 @@ class ExpandableFabState extends State<ExpandableFab>
                   );
                 },
                 child: Container(color: Colors.transparent),
-              ),
-            ),
-          if (overlayColor != null)
-            IgnorePointer(
-              ignoring: !_open,
-              child: FadeTransition(
-                opacity: _expandAnimation,
-                child: Container(
-                  color: overlayColor,
-                ),
               ),
             ),
           ..._buildExpandingActionButtons(offset),
