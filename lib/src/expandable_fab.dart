@@ -234,11 +234,18 @@ class ExpandableFabState extends State<ExpandableFab>
     final location = ExpandableFab.location as _ExpandableFabLocation;
     Offset? offset;
     Widget? cache;
+    final ScaffoldState? scaffold =
+        context.findAncestorStateOfType<ScaffoldState>();
+
     return ValueListenableBuilder<ScaffoldPrelayoutGeometry?>(
       valueListenable: location.scaffoldGeometry,
       builder: ((context, geometry, child) {
         if (geometry == null) {
-          return const SizedBox.shrink();
+          if (scaffold == null) {
+            return _buildButtons(const Offset(16, 16));
+          } else {
+            return const SizedBox.shrink();
+          }
         }
         double x;
         if (widget.pos == ExpandableFabPos.right) {
