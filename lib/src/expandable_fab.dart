@@ -130,6 +130,24 @@ class ExpandableFab extends StatefulWidget {
   /// Provides the style for overlay. No overlay when null.
   final ExpandableFabOverlayStyle? overlayStyle;
 
+  /// The state from the closest instance of this class that encloses the given context.
+  static ExpandableFabState of(BuildContext context) {
+    ExpandableFabState? state;
+    if (context is StatefulElement && context.state is ExpandableFabState) {
+      state = context.state as ExpandableFabState;
+    }
+    state = context.findRootAncestorStateOfType<ExpandableFabState>() ?? state;
+
+    assert(() {
+      if (state == null) {
+        throw FlutterError(
+            'ExpandableFab operation requested with a context that does not include a ExpandableFab.');
+      }
+      return true;
+    }());
+    return state!;
+  }
+
   @override
   State<ExpandableFab> createState() => ExpandableFabState();
 }
