@@ -67,6 +67,17 @@ ExpandableFab(
 
 <img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/example/ss/left.gif?raw=true" width="320px"/>
 
+### Center Fan style
+
+<img src="https://github.com/zuvola/flutter_expandable_fab/blob/master/example/ss/center.gif?raw=true" width="320px"/>
+
+```dart
+floatingActionButton: ExpandableFab(
+  type: ExpandableFabType.fan,
+  pos: ExpandableFabPos.center,
+  fanAngle: 180,
+```
+
 ## Getting started
 
 ```dart

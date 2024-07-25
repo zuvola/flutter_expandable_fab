@@ -1,3 +1,8 @@
+## 2.2.0
+- Made to work without Scaffold.
+- Add ExpandableFabPos.center.
+- Add 'of' method.
+
 ## 2.1.0
 - Allows children's animations to be changed.
 - Fixed animation issues.
