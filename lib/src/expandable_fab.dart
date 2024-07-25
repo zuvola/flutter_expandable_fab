@@ -9,7 +9,7 @@ import '../flutter_expandable_fab.dart';
 enum ExpandableFabType { fan, up, side }
 
 /// The position options for the FAB on the screen.
-enum ExpandableFabPos { right, left }
+enum ExpandableFabPos { right, left, center }
 
 /// Animation Type
 enum ExpandableFabAnimation { none, rotate }
@@ -242,15 +242,21 @@ class ExpandableFabState extends State<ExpandableFab>
       builder: ((context, geometry, child) {
         if (geometry == null) {
           if (scaffold == null) {
-            return _buildButtons(const Offset(16, 16));
+            double dx = 0;
+            if (widget.pos == ExpandableFabPos.right) {
+              dx = 16;
+            } else if (widget.pos == ExpandableFabPos.left) {
+              dx = -16;
+            }
+            return _buildButtons(Offset(dx, 16));
           } else {
             return const SizedBox.shrink();
           }
         }
-        double x;
+        double x = 0;
         if (widget.pos == ExpandableFabPos.right) {
           x = kFloatingActionButtonMargin + geometry.minInsets.right;
-        } else {
+        } else if (widget.pos == ExpandableFabPos.left) {
           x = -kFloatingActionButtonMargin - geometry.minInsets.left;
         }
         final bottomContentHeight =
@@ -269,12 +275,21 @@ class ExpandableFabState extends State<ExpandableFab>
   Widget _buildButtons(Offset offset) {
     final blur = widget.overlayStyle?.blur;
     final overlayColor = widget.overlayStyle?.color;
+    final Alignment alignment;
+    switch (widget.pos) {
+      case ExpandableFabPos.left:
+        alignment = Alignment.bottomLeft;
+        break;
+      case ExpandableFabPos.center:
+        alignment = Alignment.bottomCenter;
+        break;
+      default:
+        alignment = Alignment.bottomRight;
+    }
     return GestureDetector(
       onTap: () => toggle(),
       child: Stack(
-        alignment: widget.pos == ExpandableFabPos.right
-            ? Alignment.bottomRight
-            : Alignment.bottomLeft,
+        alignment: alignment,
         children: [
           Container(),
           if (overlayColor != null)
@@ -339,14 +354,24 @@ class ExpandableFabState extends State<ExpandableFab>
       buttonOffset = (_openButtonBuilder.size - _closeButtonBuilder.size) / 2;
     }
     var totalOffset = offset;
-    if (widget.pos == ExpandableFabPos.right) {
-      totalOffset += widget.childrenOffset + Offset(buttonOffset, buttonOffset);
-    } else {
-      totalOffset += Offset(-widget.childrenOffset.dx - buttonOffset,
-          widget.childrenOffset.dy + buttonOffset);
+    switch (widget.pos) {
+      case ExpandableFabPos.left:
+        totalOffset += Offset(-widget.childrenOffset.dx - buttonOffset,
+            widget.childrenOffset.dy + buttonOffset);
+        break;
+      case ExpandableFabPos.center:
+        final screenSize = MediaQuery.of(context).size;
+        totalOffset = Offset(
+            screenSize.width / 2 - _closeButtonBuilder.size / 2,
+            offset.dy + buttonOffset);
+        break;
+      default:
+        totalOffset +=
+            widget.childrenOffset + Offset(buttonOffset, buttonOffset);
     }
     for (var i = 0; i < count; i++) {
-      final double dir, dist;
+      final double dist;
+      double dir;
       switch (widget.type) {
         case ExpandableFabType.fan:
           final half = (90 - widget.fanAngle) / 2;
@@ -354,6 +379,9 @@ class ExpandableFabState extends State<ExpandableFab>
             dir = widget.fanAngle / (count - 1) * i + half;
           } else {
             dir = widget.fanAngle + half;
+          }
+          if (widget.pos == ExpandableFabPos.center) {
+            dir += 45;
           }
           dist = widget.distance;
           break;
@@ -448,8 +476,8 @@ class _ExpandingActionButton extends StatelessWidget {
           progress.value * maxDistance,
         );
         return Positioned(
-          right: fabPos == ExpandableFabPos.right ? offset.dx + pos.dx : null,
-          left: fabPos == ExpandableFabPos.right ? null : -offset.dx + pos.dx,
+          right: fabPos == ExpandableFabPos.left ? null : offset.dx + pos.dx,
+          left: fabPos == ExpandableFabPos.left ? -offset.dx + pos.dx : null,
           bottom: offset.dy + pos.dy,
           child: Transform.rotate(
             angle: animation == ExpandableFabAnimation.rotate

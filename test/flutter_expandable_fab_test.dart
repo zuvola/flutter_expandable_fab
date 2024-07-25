@@ -188,4 +188,45 @@ void main() {
 
     expect(closeFab.icon, closeButtonIcon);
   });
+
+  testWidgets('without scaffold position', (WidgetTester tester) async {
+    Widget build(ExpandableFabPos pos) {
+      return MaterialApp(
+        home: ExpandableFab(
+          pos: pos,
+          children: [Container()],
+        ),
+      );
+    }
+
+    await tester.pumpWidget(build(ExpandableFabPos.right));
+    await tester.pump(const Duration(milliseconds: 50));
+
+    final closeFab = find.byType(FloatingActionButton).at(0);
+    final openFab = find.byType(FloatingActionButton).at(1);
+    expect(closeFab, isNotNull);
+    expect(openFab, isNotNull);
+
+    // ScreenSize: 800 x 600
+    // kFloatingActionButtonMargin: 16.0
+    // FabSize: 56
+    // 800 - 16 - (56 / 2) = 756
+    // 600 - 16 - (56 / 2) = 556
+    var openCenter = tester.getCenter(openFab);
+    expect(openCenter.dx.round(), 756.0);
+    expect(openCenter.dy.round(), 556.0);
+    var closeCenter = tester.getCenter(closeFab);
+    expect(openCenter, closeCenter);
+
+    await tester.pumpWidget(build(ExpandableFabPos.left));
+    await tester.pump(const Duration(milliseconds: 50));
+
+    // 16 + (56 / 2) = 44
+    // 600 - 16 - (56 / 2) = 556
+    openCenter = tester.getCenter(openFab);
+    expect(openCenter.dx.round(), 44.0);
+    expect(openCenter.dy.round(), 556.0);
+    closeCenter = tester.getCenter(closeFab);
+    expect(openCenter, closeCenter);
+  });
 }
