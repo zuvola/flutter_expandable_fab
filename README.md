@@ -264,6 +264,7 @@ floatingActionButton: ExpandableFab(
 | onClose | Will be called before the menu closes |  |
 | afterClose | Will be called after the menu closes |  |
 | overlayStyle | Provides the style for overlay. No overlay when null. |  |
+| openCloseStackAlignment | Defines how [openButtonBuilder] and [closeButtonBuilder] are aligned in a [Stack] | Alignment.center |
 
 ### FloatingActionButtonBuilder
 | Property |Description| Default |

@@ -1,3 +1,6 @@
+## 2.3.0
+- Add an option to configure open & close button alignment
+
 ## 2.2.0
 - Made to work without Scaffold.
 - Add ExpandableFabPos.center.

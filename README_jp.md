@@ -264,6 +264,7 @@ floatingActionButton: ExpandableFab(
 | onClose | メニューが閉じる前に呼び出されます |  |
 | afterClose | メニューが閉じた後に呼び出されます |  |
 | overlayStyle | オーバーレイのスタイル、nullで非表示 |  |
+| openCloseStackAlignment | [Stack]内の[openButtonBuilder]と[closeButtonBuilder]の並び方 | Alignment.center |
 
 ### FloatingActionButtonBuilder
 | Property |Description| Default |
