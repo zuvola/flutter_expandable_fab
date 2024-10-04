@@ -81,6 +81,7 @@ class ExpandableFab extends StatefulWidget {
     this.afterClose,
     this.overlayStyle,
     this.openCloseStackAlignment = Alignment.center,
+    this.elevation,
   });
 
   /// Distance from children.
@@ -134,6 +135,9 @@ class ExpandableFab extends StatefulWidget {
   /// Defines how [openButtonBuilder] and [closeButtonBuilder] are aligned in a [Stack].
   /// Useful when the buttons have different sizes and need specific alignment adjustments.
   final Alignment openCloseStackAlignment;
+
+  /// This controls the size of the shadow below the floating action button
+  final double? elevation;
 
   /// The state from the closest instance of this class that encloses the given context.
   static ExpandableFabState of(BuildContext context) {
