@@ -54,6 +54,7 @@ class DefaultFloatingActionButtonBuilder extends FloatingActionButtonBuilder {
   /// - [backgroundColor]: The button's background color.
   /// - [shape]: The shape of the FAB's [Material].
   /// - [heroTag]: The tag to apply to the button's [Hero] widget.
+  /// - [elevation]: This controls the size of the shadow below the floating action button.
   /// - [child]: The widget below the button widget in the tree.
   DefaultFloatingActionButtonBuilder({
     this.fabSize = ExpandableFabSize.regular,
@@ -61,6 +62,7 @@ class DefaultFloatingActionButtonBuilder extends FloatingActionButtonBuilder {
     this.backgroundColor,
     this.shape,
     this.heroTag,
+    this.elevation,
     this.child,
   }) : super(
           size: _actualSize(fabSize),
@@ -82,6 +84,7 @@ class DefaultFloatingActionButtonBuilder extends FloatingActionButtonBuilder {
               backgroundColor: backgroundColor,
               shape: shape,
               heroTag: heroTag,
+              elevation: elevation,
               onPressed: onPressed,
               child: child,
             );
@@ -103,6 +106,9 @@ class DefaultFloatingActionButtonBuilder extends FloatingActionButtonBuilder {
   /// The tag to apply to the button's [Hero] widget.
   final Object? heroTag;
 
+  /// This controls the size of the shadow below the floating action button
+  final double? elevation;
+
   /// The widget below the button widget in the tree.
   final Widget? child;
 }
@@ -116,6 +122,7 @@ class RotateFloatingActionButtonBuilder extends FloatingActionButtonBuilder {
   /// - [backgroundColor]: The button's background color.
   /// - [shape]: The shape of the FAB's [Material].
   /// - [heroTag]: The tag to apply to the button's [Hero] widget.
+  /// - [elevation]: This controls the size of the shadow below the floating action button.
   /// - [child]: The widget below the button widget in the tree.
   /// - [angle]: The angle of rotation to apply to the FAB, in radians.
   RotateFloatingActionButtonBuilder({
@@ -124,6 +131,7 @@ class RotateFloatingActionButtonBuilder extends FloatingActionButtonBuilder {
     this.backgroundColor,
     this.shape,
     this.heroTag,
+    this.elevation,
     this.child,
     this.angle = math.pi / 2,
   }) : super(
@@ -140,6 +148,7 @@ class RotateFloatingActionButtonBuilder extends FloatingActionButtonBuilder {
                     backgroundColor: backgroundColor,
                     shape: shape,
                     heroTag: heroTag,
+                    elevation: elevation,
                     fabSize: fabSize,
                     child: child,
                   ).builder(context, onPressed, progress),
@@ -163,6 +172,9 @@ class RotateFloatingActionButtonBuilder extends FloatingActionButtonBuilder {
 
   /// The tag to apply to the button's [Hero] widget.
   final Object? heroTag;
+
+  /// This controls the size of the shadow below the floating action button
+  final double? elevation;
 
   /// The widget below the button widget in the tree.
   final Widget? child;
