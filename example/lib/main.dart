@@ -74,6 +74,7 @@ class _FirstPageState extends State<FirstPage> {
       body: CounterWidget(),
       floatingActionButtonLocation: ExpandableFab.location,
       floatingActionButton: ExpandableFab(
+        margin: const EdgeInsets.all(100),
         key: _key,
         // duration: const Duration(milliseconds: 500),
         // distance: 200.0,
@@ -136,8 +137,7 @@ class _FirstPageState extends State<FirstPage> {
             heroTag: null,
             child: const Icon(Icons.search),
             onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: ((context) => const NextPage())));
+              Navigator.of(context).push(MaterialPageRoute(builder: ((context) => const NextPage())));
             },
           ),
           FloatingActionButton.small(
