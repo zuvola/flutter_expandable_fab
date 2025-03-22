@@ -74,8 +74,8 @@ class _FirstPageState extends State<FirstPage> {
       body: CounterWidget(),
       floatingActionButtonLocation: ExpandableFab.location,
       floatingActionButton: ExpandableFab(
-        margin: const EdgeInsets.all(100),
         key: _key,
+        // margin: const EdgeInsets.all(100),
         // duration: const Duration(milliseconds: 500),
         // distance: 200.0,
         // type: ExpandableFabType.up,
@@ -90,6 +90,7 @@ class _FirstPageState extends State<FirstPage> {
         //   backgroundColor: Colors.green,
         //   shape: const CircleBorder(),
         //   angle: 3.14 * 2,
+        //   elevation: 5,
         // ),
         // closeButtonBuilder: FloatingActionButtonBuilder(
         //   size: 56,
@@ -105,7 +106,7 @@ class _FirstPageState extends State<FirstPage> {
         //   },
         // ),
         overlayStyle: ExpandableFabOverlayStyle(
-          color: Colors.black.withOpacity(0.5),
+          color: Colors.black.withValues(alpha: 0.5),
           blur: 5,
         ),
         onOpen: () {
@@ -137,7 +138,8 @@ class _FirstPageState extends State<FirstPage> {
             heroTag: null,
             child: const Icon(Icons.search),
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: ((context) => const NextPage())));
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: ((context) => const NextPage())));
             },
           ),
           FloatingActionButton.small(
