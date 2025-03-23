@@ -1,3 +1,6 @@
+## 2.4.1
+- Formatted source file.
+
 ## 2.4.0
 - Add a elevation parameter
 - Add a margin parameter
