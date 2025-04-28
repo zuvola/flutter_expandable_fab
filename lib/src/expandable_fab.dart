@@ -222,7 +222,7 @@ class ExpandableFabState extends State<ExpandableFab>
       _closeButtonBuilder = widget.closeButtonBuilder!;
     }
 
-    Future.delayed(const Duration(milliseconds: 300), () {
+    Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) {
         setState(() {
           _delayDone = true;
