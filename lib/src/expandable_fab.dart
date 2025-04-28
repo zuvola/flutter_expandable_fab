@@ -181,6 +181,7 @@ class ExpandableFabState extends State<ExpandableFab>
   late FloatingActionButtonBuilder _closeButtonBuilder =
       _defaultCloseButtonBuilder;
   bool _open = false;
+  bool _delayDone = false;
 
   /// Returns whether the menu is open
   bool get isOpen => _controller.value > 0.5;
@@ -220,6 +221,14 @@ class ExpandableFabState extends State<ExpandableFab>
     if (widget.closeButtonBuilder != null) {
       _closeButtonBuilder = widget.closeButtonBuilder!;
     }
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        setState(() {
+          _delayDone = true;
+        });
+      }
+    });
   }
 
   @override
@@ -237,46 +246,52 @@ class ExpandableFabState extends State<ExpandableFab>
     super.dispose();
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     final location = ExpandableFab.location as _ExpandableFabLocation;
     Offset? offset;
     Widget? cache;
-    final ScaffoldState? scaffold =
-        context.findAncestorStateOfType<ScaffoldState>();
     return ValueListenableBuilder<ScaffoldPrelayoutGeometry?>(
       valueListenable: location.scaffoldGeometry,
-      builder: ((context, geometry, child) {
-        if (geometry == null) {
-          if (scaffold == null) {
-            double dx = 0;
-            if (widget.pos == ExpandableFabPos.right) {
-              dx = 16;
-            } else if (widget.pos == ExpandableFabPos.left) {
-              dx = -16;
-            }
-            return _buildButtons(Offset(dx, 16));
-          } else {
-            return const SizedBox.shrink();
-          }
+      builder: (context, geometry, child) {
+        final ready = geometry != null && _delayDone;
+
+        Offset currentOffset;
+        if (ready) {
+          final double x =
+              widget.pos == ExpandableFabPos.right
+                  ? kFloatingActionButtonMargin + geometry.minInsets.right
+                  : widget.pos == ExpandableFabPos.left
+                  ? -kFloatingActionButtonMargin - geometry.minInsets.left
+                  : 0;
+          final bottomContentHeight =
+              geometry.scaffoldSize.height - geometry.contentBottom;
+          final double y =
+              kFloatingActionButtonMargin +
+              math.max(geometry.minViewPadding.bottom, bottomContentHeight);
+          currentOffset = Offset(x, y);
+        } else {
+          final safe = MediaQuery.of(context).padding;
+          final double x =
+              widget.pos == ExpandableFabPos.right
+                  ? kFloatingActionButtonMargin + safe.right
+                  : widget.pos == ExpandableFabPos.left
+                  ? -kFloatingActionButtonMargin - safe.left
+                  : 0;
+          final double y = kFloatingActionButtonMargin + safe.bottom;
+          currentOffset = Offset(x, y);
         }
-        double x = 0;
-        if (widget.pos == ExpandableFabPos.right) {
-          x = kFloatingActionButtonMargin + geometry.minInsets.right;
-        } else if (widget.pos == ExpandableFabPos.left) {
-          x = -kFloatingActionButtonMargin - geometry.minInsets.left;
-        }
-        final bottomContentHeight =
-            geometry.scaffoldSize.height - geometry.contentBottom;
-        final y =
-            kFloatingActionButtonMargin +
-            math.max(geometry.minViewPadding.bottom, bottomContentHeight);
-        if (offset != Offset(x, y)) {
-          offset = Offset(x, y);
+
+        if (!ready || offset != currentOffset) {
+          offset = currentOffset;
           cache = _buildButtons(offset!);
         }
-        return _controller.value > 0.0 ? FocusScope(child: cache!) : cache!;
-      }),
+
+        return Opacity(
+          opacity: ready ? 1 : 0,
+          child: _controller.value > 0.0 ? FocusScope(child: cache!) : cache!,
+        );
+      },
     );
   }
 
