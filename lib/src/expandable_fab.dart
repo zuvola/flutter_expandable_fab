@@ -181,37 +181,35 @@ class ExpandableFabState extends State<ExpandableFab>
   late FloatingActionButtonBuilder _closeButtonBuilder =
       _defaultCloseButtonBuilder;
   bool _open = false;
+  bool _delayDone = false;
 
   /// Returns whether the menu is open
-  bool get isOpen => _open;
+  bool get isOpen => _controller.value > 0.5;
 
   /// Display or hide the menu.
-  void toggle() {
-    setState(() {
-      _open = !_open;
-      if (_open) {
-        widget.onOpen?.call();
-        _controller.forward().then((value) {
-          widget.afterOpen?.call();
-        });
-      } else {
-        widget.onClose?.call();
-        _controller.reverse().then((value) {
-          widget.afterClose?.call();
-        });
-      }
-    });
+ void toggle() {
+    if (_controller.isAnimating) return;
+    if (_controller.value == 0.0) {
+      widget.onOpen?.call();
+      _controller.forward().then((_) {
+        widget.afterOpen?.call();
+      });
+    } else if (_controller.value == 1.0) {
+      widget.onClose?.call();
+      _controller.reverse().then((_) {
+        widget.afterClose?.call();
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    _open = widget.initialOpen;
     _controller = AnimationController(
-      value: _open ? 1.0 : 0.0,
+      value: widget.initialOpen ? 1.0 : 0.0,
       duration: widget.duration,
       vsync: this,
-    );
+    )..addListener(() => setState(() {}));
     _expandAnimation = CurvedAnimation(
       curve: Curves.fastOutSlowIn,
       reverseCurve: Curves.easeOutQuad,
@@ -223,12 +221,19 @@ class ExpandableFabState extends State<ExpandableFab>
     if (widget.closeButtonBuilder != null) {
       _closeButtonBuilder = widget.closeButtonBuilder!;
     }
+
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (mounted) {
+        setState(() {
+          _delayDone = true;
+        });
+      }
+    });
   }
 
   @override
   void didUpdateWidget(covariant ExpandableFab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _open = widget.initialOpen;
     _controller.duration = widget.duration;
     _openButtonBuilder = widget.openButtonBuilder ?? _defaultOpenButtonBuilder;
     _closeButtonBuilder =
@@ -241,46 +246,52 @@ class ExpandableFabState extends State<ExpandableFab>
     super.dispose();
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     final location = ExpandableFab.location as _ExpandableFabLocation;
     Offset? offset;
     Widget? cache;
-    final ScaffoldState? scaffold =
-        context.findAncestorStateOfType<ScaffoldState>();
-
     return ValueListenableBuilder<ScaffoldPrelayoutGeometry?>(
       valueListenable: location.scaffoldGeometry,
-      builder: ((context, geometry, child) {
-        if (geometry == null) {
-          if (scaffold == null) {
-            double dx = 0;
-            if (widget.pos == ExpandableFabPos.right) {
-              dx = 16;
-            } else if (widget.pos == ExpandableFabPos.left) {
-              dx = -16;
-            }
-            return _buildButtons(Offset(dx, 16));
-          } else {
-            return const SizedBox.shrink();
-          }
+      builder: (context, geometry, child) {
+        final ready = geometry != null && _delayDone;
+
+        Offset currentOffset;
+        if (ready) {
+          final double x =
+              widget.pos == ExpandableFabPos.right
+                  ? kFloatingActionButtonMargin + geometry.minInsets.right
+                  : widget.pos == ExpandableFabPos.left
+                  ? -kFloatingActionButtonMargin - geometry.minInsets.left
+                  : 0;
+          final bottomContentHeight =
+              geometry.scaffoldSize.height - geometry.contentBottom;
+          final double y =
+              kFloatingActionButtonMargin +
+              math.max(geometry.minViewPadding.bottom, bottomContentHeight);
+          currentOffset = Offset(x, y);
+        } else {
+          final safe = MediaQuery.of(context).padding;
+          final double x =
+              widget.pos == ExpandableFabPos.right
+                  ? kFloatingActionButtonMargin + safe.right
+                  : widget.pos == ExpandableFabPos.left
+                  ? -kFloatingActionButtonMargin - safe.left
+                  : 0;
+          final double y = kFloatingActionButtonMargin + safe.bottom;
+          currentOffset = Offset(x, y);
         }
-        double x = 0;
-        if (widget.pos == ExpandableFabPos.right) {
-          x = kFloatingActionButtonMargin + geometry.minInsets.right;
-        } else if (widget.pos == ExpandableFabPos.left) {
-          x = -kFloatingActionButtonMargin - geometry.minInsets.left;
-        }
-        final bottomContentHeight =
-            geometry.scaffoldSize.height - geometry.contentBottom;
-        final y = kFloatingActionButtonMargin +
-            math.max(geometry.minViewPadding.bottom, bottomContentHeight);
-        if (offset != Offset(x, y)) {
-          offset = Offset(x, y);
+
+        if (!ready || offset != currentOffset) {
+          offset = currentOffset;
           cache = _buildButtons(offset!);
         }
-        return _open ? FocusScope(child: cache!) : cache!;
-      }),
+
+        return Opacity(
+          opacity: ready ? 1 : 0,
+          child: _controller.value > 0.0 ? FocusScope(child: cache!) : cache!,
+        );
+      },
     );
   }
 
@@ -292,8 +303,8 @@ class ExpandableFabState extends State<ExpandableFab>
           (widget.pos == ExpandableFabPos.left
               ? widget.margin.left
               : widget.pos == ExpandableFabPos.center
-                  ? 0
-                  : widget.margin.right),
+              ? 0
+              : widget.margin.right),
       offset.dy + widget.margin.bottom,
     );
     final Alignment alignment;
@@ -315,31 +326,23 @@ class ExpandableFabState extends State<ExpandableFab>
           Container(),
           if (overlayColor != null)
             IgnorePointer(
-              ignoring: !_open,
+              ignoring: !isOpen,
               child: FadeTransition(
                 opacity: _expandAnimation,
-                child: Container(
-                  color: overlayColor,
-                ),
+                child: Container(color: overlayColor),
               ),
             ),
           if (blur != null)
             IgnorePointer(
-              ignoring: !_open,
-              child: TweenAnimationBuilder<double>(
-                tween: Tween<double>(
-                  begin: _open ? 0.0 : blur,
-                  end: _open ? blur : 0.0,
-                ),
-                duration: widget.duration,
-                curve: Curves.easeInOut,
-                builder: (_, value, child) {
-                  if (value < 0.001) {
-                    return child!;
-                  }
+              ignoring: !isOpen,
+              child: AnimatedBuilder(
+                animation: _expandAnimation,
+                builder: (_, child) {
+                  final sigma = _expandAnimation.value * blur;
+                  if (sigma < 0.001) return child!;
                   return ClipRect(
                     child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: value, sigmaY: value),
+                      filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
                       child: child,
                     ),
                   );
@@ -356,7 +359,10 @@ class ExpandableFabState extends State<ExpandableFab>
                 FadeTransition(
                   opacity: _expandAnimation,
                   child: _closeButtonBuilder.builder(
-                      context, toggle, _expandAnimation),
+                    context,
+                    toggle,
+                    _expandAnimation,
+                  ),
                 ),
                 _buildTapToOpenFab(),
               ],
@@ -377,14 +383,17 @@ class ExpandableFabState extends State<ExpandableFab>
     var totalOffset = offset;
     switch (widget.pos) {
       case ExpandableFabPos.left:
-        totalOffset += Offset(-widget.childrenOffset.dx - buttonOffset,
-            widget.childrenOffset.dy + buttonOffset);
+        totalOffset += Offset(
+          -widget.childrenOffset.dx - buttonOffset,
+          widget.childrenOffset.dy + buttonOffset,
+        );
         break;
       case ExpandableFabPos.center:
         final screenSize = MediaQuery.of(context).size;
         totalOffset = Offset(
-            screenSize.width / 2 - _closeButtonBuilder.size / 2,
-            offset.dy + buttonOffset);
+          screenSize.width / 2 - _closeButtonBuilder.size / 2,
+          offset.dy + buttonOffset,
+        );
         break;
       default:
         totalOffset +=
@@ -433,9 +442,8 @@ class ExpandableFabState extends State<ExpandableFab>
   Widget _buildTapToOpenFab() {
     final transformValues = _closeButtonBuilder.size / _openButtonBuilder.size;
     final reverse = ReverseAnimation(_expandAnimation);
-
     return IgnorePointer(
-      ignoring: _open,
+      ignoring: isOpen,
       child: ScaleTransition(
         scale: Tween(begin: transformValues, end: 1.0).animate(reverse),
         child: FadeTransition(
@@ -450,10 +458,11 @@ class ExpandableFabState extends State<ExpandableFab>
 class _ExpandableFabLocation extends StandardFabLocation {
   final ValueNotifier<ScaffoldPrelayoutGeometry?> scaffoldGeometry =
       ValueNotifier(null);
-
   @override
   double getOffsetX(
-      ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
+    ScaffoldPrelayoutGeometry scaffoldGeometry,
+    double adjustment,
+  ) {
     Future.microtask(() {
       this.scaffoldGeometry.value = scaffoldGeometry;
     });
@@ -462,7 +471,9 @@ class _ExpandableFabLocation extends StandardFabLocation {
 
   @override
   double getOffsetY(
-      ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
+    ScaffoldPrelayoutGeometry scaffoldGeometry,
+    double adjustment,
+  ) {
     return -scaffoldGeometry.snackBarSize.height;
   }
 }
@@ -478,7 +489,6 @@ class _ExpandingActionButton extends StatelessWidget {
     required this.offset,
     required this.animation,
   });
-
   final double directionInDegrees;
   final double maxDistance;
   final Animation<double> progress;
@@ -486,7 +496,6 @@ class _ExpandingActionButton extends StatelessWidget {
   final ExpandableFabPos fabPos;
   final Widget child;
   final ExpandableFabAnimation animation;
-
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -501,20 +510,15 @@ class _ExpandingActionButton extends StatelessWidget {
           left: fabPos == ExpandableFabPos.left ? -offset.dx + pos.dx : null,
           bottom: offset.dy + pos.dy,
           child: Transform.rotate(
-            angle: animation == ExpandableFabAnimation.rotate
-                ? (1.0 - progress.value) * math.pi / 2
-                : 0,
-            child: IgnorePointer(
-              ignoring: progress.value != 1,
-              child: child,
-            ),
+            angle:
+                animation == ExpandableFabAnimation.rotate
+                    ? (1.0 - progress.value) * math.pi / 2
+                    : 0,
+            child: IgnorePointer(ignoring: progress.value != 1, child: child),
           ),
         );
       },
-      child: FadeTransition(
-        opacity: progress,
-        child: child,
-      ),
+      child: FadeTransition(opacity: progress, child: child),
     );
   }
 }
