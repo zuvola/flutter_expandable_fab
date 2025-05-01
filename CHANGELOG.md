@@ -1,3 +1,6 @@
+## 2.5.0
+- Fixed closing bug and eliminate unnecessary blur flicker.
+
 ## 2.4.1
 - Formatted source file.
 
