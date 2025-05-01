@@ -180,7 +180,6 @@ class ExpandableFabState extends State<ExpandableFab>
       _defaultOpenButtonBuilder;
   late FloatingActionButtonBuilder _closeButtonBuilder =
       _defaultCloseButtonBuilder;
-  bool _open = false;
   bool _delayDone = false;
 
   /// Returns whether the menu is open

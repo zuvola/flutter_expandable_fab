@@ -46,6 +46,7 @@ void main() {
     expect(callStack.first, 'onClose');
     expect(callStack.last, 'afterClose');
     expect(state.isOpen, false);
+    await tester.pump(const Duration(milliseconds: 500));
   });
 
   testWidgets('position', (WidgetTester tester) async {
@@ -91,6 +92,7 @@ void main() {
     expect(openCenter.dy.round(), 556.0);
     closeCenter = tester.getCenter(closeFab);
     expect(openCenter, closeCenter);
+    await tester.pump(const Duration(milliseconds: 500));
   });
 
   testWidgets('initialOpen, childrenOffset, distance',
@@ -141,6 +143,7 @@ void main() {
     br = tester.getBottomRight(child);
     expect(br.dx.round(), 766.0);
     expect(br.dy.round(), 356.0);
+    await tester.pump(const Duration(milliseconds: 500));
   });
 
   testWidgets('custom buttons', (WidgetTester tester) async {
@@ -187,6 +190,7 @@ void main() {
     expect(openFab.shape, const CircleBorder());
 
     expect(closeFab.icon, closeButtonIcon);
+    await tester.pump(const Duration(milliseconds: 500));
   });
 
   testWidgets('without scaffold position', (WidgetTester tester) async {
@@ -228,5 +232,6 @@ void main() {
     expect(openCenter.dy.round(), 556.0);
     closeCenter = tester.getCenter(closeFab);
     expect(openCenter, closeCenter);
+    await tester.pump(const Duration(milliseconds: 500));
   });
 }
