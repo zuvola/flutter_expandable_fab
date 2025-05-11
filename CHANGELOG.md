@@ -1,3 +1,6 @@
+## 2.5.1
+- Improved timer cleanup when widget is disposed.
+
 ## 2.5.0
 - Fixed closing bug and eliminate unnecessary blur flicker.
 
