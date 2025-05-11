@@ -46,7 +46,6 @@ void main() {
     expect(callStack.first, 'onClose');
     expect(callStack.last, 'afterClose');
     expect(state.isOpen, false);
-    await tester.pump(const Duration(milliseconds: 500));
   });
 
   testWidgets('position', (WidgetTester tester) async {
@@ -64,7 +63,7 @@ void main() {
     }
 
     await tester.pumpWidget(build(ExpandableFabPos.right));
-    await tester.pump(const Duration(milliseconds: 50));
+    await tester.pumpAndSettle();
 
     final closeFab = find.byType(FloatingActionButton).at(0);
     final openFab = find.byType(FloatingActionButton).at(1);
@@ -92,7 +91,6 @@ void main() {
     expect(openCenter.dy.round(), 556.0);
     closeCenter = tester.getCenter(closeFab);
     expect(openCenter, closeCenter);
-    await tester.pump(const Duration(milliseconds: 500));
   });
 
   testWidgets('initialOpen, childrenOffset, distance',
@@ -115,7 +113,7 @@ void main() {
 
     // Distance: 100, Offset: 0
     await tester.pumpWidget(build(ExpandableFabPos.right, 100, Offset.zero));
-    await tester.pump(const Duration(milliseconds: 50));
+    await tester.pumpAndSettle();
 
     ExpandableFabState state = tester.state(find.byType(ExpandableFab));
     expect(state.isOpen, true);
@@ -143,7 +141,6 @@ void main() {
     br = tester.getBottomRight(child);
     expect(br.dx.round(), 766.0);
     expect(br.dy.round(), 356.0);
-    await tester.pump(const Duration(milliseconds: 500));
   });
 
   testWidgets('custom buttons', (WidgetTester tester) async {
@@ -176,7 +173,7 @@ void main() {
         ),
       ),
     ));
-    await tester.pump(const Duration(milliseconds: 50));
+    await tester.pumpAndSettle();
 
     final openFab =
         tester.widget<FloatingActionButton>(find.byType(FloatingActionButton));
@@ -190,7 +187,6 @@ void main() {
     expect(openFab.shape, const CircleBorder());
 
     expect(closeFab.icon, closeButtonIcon);
-    await tester.pump(const Duration(milliseconds: 500));
   });
 
   testWidgets('without scaffold position', (WidgetTester tester) async {
@@ -204,7 +200,7 @@ void main() {
     }
 
     await tester.pumpWidget(build(ExpandableFabPos.right));
-    await tester.pump(const Duration(milliseconds: 50));
+    await tester.pumpAndSettle();
 
     final closeFab = find.byType(FloatingActionButton).at(0);
     final openFab = find.byType(FloatingActionButton).at(1);
@@ -232,6 +228,5 @@ void main() {
     expect(openCenter.dy.round(), 556.0);
     closeCenter = tester.getCenter(closeFab);
     expect(openCenter, closeCenter);
-    await tester.pump(const Duration(milliseconds: 500));
   });
 }

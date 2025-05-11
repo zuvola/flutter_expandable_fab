@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 
@@ -176,6 +177,7 @@ class ExpandableFabState extends State<ExpandableFab>
 
   late final AnimationController _controller;
   late final Animation<double> _expandAnimation;
+  late final Timer _timer;
   late FloatingActionButtonBuilder _openButtonBuilder =
       _defaultOpenButtonBuilder;
   late FloatingActionButtonBuilder _closeButtonBuilder =
@@ -221,7 +223,7 @@ class ExpandableFabState extends State<ExpandableFab>
       _closeButtonBuilder = widget.closeButtonBuilder!;
     }
 
-    Future.delayed(const Duration(milliseconds: 400), () {
+    _timer = Timer(const Duration(milliseconds: 400), () {
       if (mounted) {
         setState(() {
           _delayDone = true;
@@ -234,6 +236,7 @@ class ExpandableFabState extends State<ExpandableFab>
   void didUpdateWidget(covariant ExpandableFab oldWidget) {
     super.didUpdateWidget(oldWidget);
     _controller.duration = widget.duration;
+    _timer.cancel();
     _openButtonBuilder = widget.openButtonBuilder ?? _defaultOpenButtonBuilder;
     _closeButtonBuilder =
         widget.closeButtonBuilder ?? _defaultCloseButtonBuilder;
@@ -242,6 +245,7 @@ class ExpandableFabState extends State<ExpandableFab>
   @override
   void dispose() {
     _controller.dispose();
+    _timer.cancel();
     super.dispose();
   }
 
