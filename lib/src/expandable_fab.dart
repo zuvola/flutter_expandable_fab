@@ -2,9 +2,8 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
-
 import '../flutter_expandable_fab.dart';
+import 'package:flutter/material.dart';
 
 /// The type of behavior of this widget.
 enum ExpandableFabType { fan, up, side }
@@ -24,10 +23,7 @@ class ExpandableFabOverlayStyle {
   /// - [blur]: The strength of the blur behind the FAB.
   ///
   /// Only one of [color] or [blur] can be specified; both cannot be non-null at the same time.
-  const ExpandableFabOverlayStyle({
-    this.color,
-    this.blur,
-  });
+  const ExpandableFabOverlayStyle({this.color, this.blur});
 
   /// The color to paint behind the Fab.
   final Color? color;
@@ -154,7 +150,8 @@ class ExpandableFab extends StatefulWidget {
     assert(() {
       if (state == null) {
         throw FlutterError(
-            'ExpandableFab operation requested with a context that does not include a ExpandableFab.');
+          'ExpandableFab operation requested with a context that does not include a ExpandableFab.',
+        );
       }
       return true;
     }());
@@ -175,14 +172,12 @@ class ExpandableFabState extends State<ExpandableFab>
     child: const Icon(Icons.close),
   );
 
-  late final AnimationController _controller;
-  late final Animation<double> _expandAnimation;
-  late final Timer _timer;
+  late AnimationController _controller;
+  late Animation<double> _expandAnimation;
   late FloatingActionButtonBuilder _openButtonBuilder =
       _defaultOpenButtonBuilder;
   late FloatingActionButtonBuilder _closeButtonBuilder =
       _defaultCloseButtonBuilder;
-  bool _delayDone = false;
 
   /// Returns whether the menu is open
   bool get isOpen => _controller.value > 0.5;
@@ -203,6 +198,12 @@ class ExpandableFabState extends State<ExpandableFab>
     }
   }
 
+  void close() {
+    if (_controller.value != 0.0) {
+      _controller.reverse();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -210,7 +211,9 @@ class ExpandableFabState extends State<ExpandableFab>
       value: widget.initialOpen ? 1.0 : 0.0,
       duration: widget.duration,
       vsync: this,
-    )..addListener(() => setState(() {}));
+    )..addListener(() {
+      if (mounted) setState(() {});
+    });
     _expandAnimation = CurvedAnimation(
       curve: Curves.fastOutSlowIn,
       reverseCurve: Curves.easeOutQuad,
@@ -222,30 +225,23 @@ class ExpandableFabState extends State<ExpandableFab>
     if (widget.closeButtonBuilder != null) {
       _closeButtonBuilder = widget.closeButtonBuilder!;
     }
-
-    _timer = Timer(const Duration(milliseconds: 400), () {
-      if (mounted) {
-        setState(() {
-          _delayDone = true;
-        });
-      }
-    });
   }
 
   @override
   void didUpdateWidget(covariant ExpandableFab oldWidget) {
     super.didUpdateWidget(oldWidget);
+    // Only update duration, do not recreate controller or animation
     _controller.duration = widget.duration;
-    _timer.cancel();
     _openButtonBuilder = widget.openButtonBuilder ?? _defaultOpenButtonBuilder;
     _closeButtonBuilder =
         widget.closeButtonBuilder ?? _defaultCloseButtonBuilder;
+    // Always reset FAB to closed state when widget is rebuilt
+    close();
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    _timer.cancel();
     super.dispose();
   }
 
@@ -257,25 +253,29 @@ class ExpandableFabState extends State<ExpandableFab>
     return ValueListenableBuilder<ScaffoldPrelayoutGeometry?>(
       valueListenable: location.scaffoldGeometry,
       builder: (context, geometry, child) {
-        final ready = geometry != null && _delayDone;
+        // Only depend on geometry, not _delayDone
+        final ready = geometry != null;
 
         Offset currentOffset;
         if (ready) {
-          final double x = widget.pos == ExpandableFabPos.right
-              ? kFloatingActionButtonMargin + geometry.minInsets.right
-              : widget.pos == ExpandableFabPos.left
+          final double x =
+              widget.pos == ExpandableFabPos.right
+                  ? kFloatingActionButtonMargin + geometry.minInsets.right
+                  : widget.pos == ExpandableFabPos.left
                   ? -kFloatingActionButtonMargin - geometry.minInsets.left
                   : 0;
           final bottomContentHeight =
               geometry.scaffoldSize.height - geometry.contentBottom;
-          final double y = kFloatingActionButtonMargin +
+          final double y =
+              kFloatingActionButtonMargin +
               math.max(geometry.minViewPadding.bottom, bottomContentHeight);
           currentOffset = Offset(x, y);
         } else {
           final safe = MediaQuery.of(context).padding;
-          final double x = widget.pos == ExpandableFabPos.right
-              ? kFloatingActionButtonMargin + safe.right
-              : widget.pos == ExpandableFabPos.left
+          final double x =
+              widget.pos == ExpandableFabPos.right
+                  ? kFloatingActionButtonMargin + safe.right
+                  : widget.pos == ExpandableFabPos.left
                   ? -kFloatingActionButtonMargin - safe.left
                   : 0;
           final double y = kFloatingActionButtonMargin + safe.bottom;
@@ -303,8 +303,8 @@ class ExpandableFabState extends State<ExpandableFab>
           (widget.pos == ExpandableFabPos.left
               ? widget.margin.left
               : widget.pos == ExpandableFabPos.center
-                  ? 0
-                  : widget.margin.right),
+              ? 0
+              : widget.margin.right),
       offset.dy + widget.margin.bottom,
     );
     final Alignment alignment;
@@ -510,9 +510,10 @@ class _ExpandingActionButton extends StatelessWidget {
           left: fabPos == ExpandableFabPos.left ? -offset.dx + pos.dx : null,
           bottom: offset.dy + pos.dy,
           child: Transform.rotate(
-            angle: animation == ExpandableFabAnimation.rotate
-                ? (1.0 - progress.value) * math.pi / 2
-                : 0,
+            angle:
+                animation == ExpandableFabAnimation.rotate
+                    ? (1.0 - progress.value) * math.pi / 2
+                    : 0,
             child: IgnorePointer(ignoring: progress.value != 1, child: child),
           ),
         );
