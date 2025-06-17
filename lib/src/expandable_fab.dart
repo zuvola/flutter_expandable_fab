@@ -212,8 +212,8 @@ class ExpandableFabState extends State<ExpandableFab>
       duration: widget.duration,
       vsync: this,
     )..addListener(() {
-      if (mounted) setState(() {});
-    });
+        if (mounted) setState(() {});
+      });
     _expandAnimation = CurvedAnimation(
       curve: Curves.fastOutSlowIn,
       reverseCurve: Curves.easeOutQuad,
@@ -258,24 +258,21 @@ class ExpandableFabState extends State<ExpandableFab>
 
         Offset currentOffset;
         if (ready) {
-          final double x =
-              widget.pos == ExpandableFabPos.right
-                  ? kFloatingActionButtonMargin + geometry.minInsets.right
-                  : widget.pos == ExpandableFabPos.left
+          final double x = widget.pos == ExpandableFabPos.right
+              ? kFloatingActionButtonMargin + geometry.minInsets.right
+              : widget.pos == ExpandableFabPos.left
                   ? -kFloatingActionButtonMargin - geometry.minInsets.left
                   : 0;
           final bottomContentHeight =
               geometry.scaffoldSize.height - geometry.contentBottom;
-          final double y =
-              kFloatingActionButtonMargin +
+          final double y = kFloatingActionButtonMargin +
               math.max(geometry.minViewPadding.bottom, bottomContentHeight);
           currentOffset = Offset(x, y);
         } else {
           final safe = MediaQuery.of(context).padding;
-          final double x =
-              widget.pos == ExpandableFabPos.right
-                  ? kFloatingActionButtonMargin + safe.right
-                  : widget.pos == ExpandableFabPos.left
+          final double x = widget.pos == ExpandableFabPos.right
+              ? kFloatingActionButtonMargin + safe.right
+              : widget.pos == ExpandableFabPos.left
                   ? -kFloatingActionButtonMargin - safe.left
                   : 0;
           final double y = kFloatingActionButtonMargin + safe.bottom;
@@ -303,8 +300,8 @@ class ExpandableFabState extends State<ExpandableFab>
           (widget.pos == ExpandableFabPos.left
               ? widget.margin.left
               : widget.pos == ExpandableFabPos.center
-              ? 0
-              : widget.margin.right),
+                  ? 0
+                  : widget.margin.right),
       offset.dy + widget.margin.bottom,
     );
     final Alignment alignment;
@@ -510,10 +507,9 @@ class _ExpandingActionButton extends StatelessWidget {
           left: fabPos == ExpandableFabPos.left ? -offset.dx + pos.dx : null,
           bottom: offset.dy + pos.dy,
           child: Transform.rotate(
-            angle:
-                animation == ExpandableFabAnimation.rotate
-                    ? (1.0 - progress.value) * math.pi / 2
-                    : 0,
+            angle: animation == ExpandableFabAnimation.rotate
+                ? (1.0 - progress.value) * math.pi / 2
+                : 0,
             child: IgnorePointer(ignoring: progress.value != 1, child: child),
           ),
         );

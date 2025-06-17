@@ -1,3 +1,8 @@
+## 2.5.2
+- Removed unnecessary Timer and ready flag logic from ExpandableFab.
+- Ensured AnimationController and CurvedAnimation are only created in initState and not recreated.
+- Fixed assertion errors and improved FAB visibility and animation after navigation or rebuilds.
+
 ## 2.5.1
 - Improved timer cleanup when widget is disposed.
 
