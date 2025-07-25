@@ -206,9 +206,19 @@ class ExpandableFabState extends State<ExpandableFab>
     }
   }
 
+  void open() {
+    if (_controller.value == 0.0) {
+      _controller.forward().then((_) {
+        widget.afterOpen?.call();
+      });
+    }
+  }
+
   void close() {
     if (_controller.value != 0.0) {
-      _controller.reverse();
+      _controller.reverse().then((_) {
+        widget.afterClose?.call();
+      });
     }
   }
 
