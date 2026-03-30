@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 
-import '../flutter_expandable_fab.dart';
+import 'action_button_builder.dart';
 import 'package:flutter/material.dart';
 
 /// The type of behavior of this widget.
@@ -57,7 +57,10 @@ class ExpandableFabOverlayStyle {
 @immutable
 class ExpandableFab extends StatefulWidget {
   /// The location of the ExpandableFab on the screen.
-  static final FloatingActionButtonLocation location = _ExpandableFabLocation();
+  static final FloatingActionButtonLocation docked =
+      _ExpandableDockedFabLocation();
+  static final FloatingActionButtonLocation float =
+      _ExpandableFloatFabLocation();
 
   const ExpandableFab({
     super.key,
@@ -247,7 +250,11 @@ class ExpandableFabState extends State<ExpandableFab>
 
   @override
   Widget build(BuildContext context) {
-    final location = ExpandableFab.location as _ExpandableFabLocation;
+    final scaffoldLocation =
+        Scaffold.of(context).widget.floatingActionButtonLocation;
+    final location = (scaffoldLocation == ExpandableFab.docked
+        ? ExpandableFab.docked
+        : ExpandableFab.float) as _ExpandableFabLocationBase;
     Offset? offset;
     Widget? cache;
     return ValueListenableBuilder<ScaffoldPrelayoutGeometry?>(
@@ -388,7 +395,7 @@ class ExpandableFabState extends State<ExpandableFab>
       case ExpandableFabPos.center:
         final screenSize = MediaQuery.of(context).size;
         totalOffset = Offset(
-          screenSize.width / 2 - _closeButtonBuilder.size / 2,
+          screenSize.width / 2 - _openButtonBuilder.size / 2,
           offset.dy + buttonOffset,
         );
         break;
@@ -452,9 +459,9 @@ class ExpandableFabState extends State<ExpandableFab>
   }
 }
 
-class _ExpandableFabLocation extends StandardFabLocation {
-  final ValueNotifier<ScaffoldPrelayoutGeometry?> scaffoldGeometry =
-      ValueNotifier(null);
+abstract class _ExpandableFabLocationBase extends StandardFabLocation {
+  ValueNotifier<ScaffoldPrelayoutGeometry?> get scaffoldGeometry;
+
   @override
   double getOffsetX(
     ScaffoldPrelayoutGeometry scaffoldGeometry,
@@ -465,6 +472,26 @@ class _ExpandableFabLocation extends StandardFabLocation {
     });
     return 0;
   }
+}
+
+class _ExpandableDockedFabLocation extends _ExpandableFabLocationBase {
+  @override
+  final ValueNotifier<ScaffoldPrelayoutGeometry?> scaffoldGeometry =
+      ValueNotifier(null);
+
+  @override
+  double getOffsetY(
+    ScaffoldPrelayoutGeometry scaffoldGeometry,
+    double adjustment,
+  ) {
+    return -scaffoldGeometry.snackBarSize.height + 45;
+  }
+}
+
+class _ExpandableFloatFabLocation extends _ExpandableFabLocationBase {
+  @override
+  final ValueNotifier<ScaffoldPrelayoutGeometry?> scaffoldGeometry =
+      ValueNotifier(null);
 
   @override
   double getOffsetY(

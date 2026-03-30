@@ -19,7 +19,38 @@ class MyApp extends StatelessWidget {
         colorSchemeSeed: Colors.blue,
       ),
       scaffoldMessengerKey: scaffoldKey,
-      home: const FirstPage(),
+      home: const HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('ExpandableFab Examples')),
+      body: ListView(
+        children: [
+          ListTile(
+            title: const Text('Float FAB (default)'),
+            subtitle: const Text('Standard floating action button position'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const FloatFabPage()),
+            ),
+          ),
+          ListTile(
+            title: const Text('Docked FAB'),
+            subtitle: const Text('FAB docked in BottomAppBar'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const DockedFabPage()),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -58,92 +89,51 @@ class CounterWidget extends StatelessWidget {
   }
 }
 
-class FirstPage extends StatefulWidget {
-  const FirstPage({Key? key}) : super(key: key);
+// Float FAB example
+class FloatFabPage extends StatefulWidget {
+  const FloatFabPage({Key? key}) : super(key: key);
 
   @override
-  State<FirstPage> createState() => _FirstPageState();
+  State<FloatFabPage> createState() => _FloatFabPageState();
 }
 
-class _FirstPageState extends State<FirstPage> {
+class _FloatFabPageState extends State<FloatFabPage> {
   final _key = GlobalKey<ExpandableFabState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text('Float FAB')),
       body: CounterWidget(),
-      floatingActionButtonLocation: ExpandableFab.location,
+      floatingActionButtonLocation: ExpandableFab.float,
       floatingActionButton: ExpandableFab(
         key: _key,
-        // margin: const EdgeInsets.all(100),
-        // duration: const Duration(milliseconds: 500),
-        // distance: 200.0,
-        // type: ExpandableFabType.up,
-        // pos: ExpandableFabPos.left,
-        // childrenOffset: const Offset(0, 20),
-        // childrenAnimation: ExpandableFabAnimation.none,
-        // fanAngle: 40,
-        // openButtonBuilder: RotateFloatingActionButtonBuilder(
-        //   child: const Icon(Icons.abc),
-        //   fabSize: ExpandableFabSize.large,
-        //   foregroundColor: Colors.amber,
-        //   backgroundColor: Colors.green,
-        //   shape: const CircleBorder(),
-        //   angle: 3.14 * 2,
-        //   elevation: 5,
-        // ),
-        // closeButtonBuilder: FloatingActionButtonBuilder(
-        //   size: 56,
-        //   builder: (BuildContext context, void Function()? onPressed,
-        //       Animation<double> progress) {
-        //     return IconButton(
-        //       onPressed: onPressed,
-        //       icon: const Icon(
-        //         Icons.check_circle_outline,
-        //         size: 40,
-        //       ),
-        //     );
-        //   },
-        // ),
         overlayStyle: ExpandableFabOverlayStyle(
           color: Colors.black.withValues(alpha: 0.5),
           blur: 5,
         ),
-        onOpen: () {
-          debugPrint('onOpen');
-        },
-        afterOpen: () {
-          debugPrint('afterOpen');
-        },
-        onClose: () {
-          debugPrint('onClose');
-        },
-        afterClose: () {
-          debugPrint('afterClose');
-        },
+        onOpen: () => debugPrint('onOpen'),
+        afterOpen: () => debugPrint('afterOpen'),
+        onClose: () => debugPrint('onClose'),
+        afterClose: () => debugPrint('afterClose'),
         children: [
           FloatingActionButton.small(
-            // shape: const CircleBorder(),
             heroTag: null,
             child: const Icon(Icons.edit),
             onPressed: () {
-              const SnackBar snackBar = SnackBar(
-                content: Text("SnackBar"),
-              );
+              const snackBar = SnackBar(content: Text('Edit pressed'));
               scaffoldKey.currentState?.showSnackBar(snackBar);
             },
           ),
           FloatingActionButton.small(
-            // shape: const CircleBorder(),
             heroTag: null,
             child: const Icon(Icons.search),
             onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: ((context) => const NextPage())));
+              const snackBar = SnackBar(content: Text('Search pressed'));
+              scaffoldKey.currentState?.showSnackBar(snackBar);
             },
           ),
           FloatingActionButton.small(
-            // shape: const CircleBorder(),
             heroTag: null,
             child: const Icon(Icons.share),
             onPressed: () {
@@ -160,17 +150,88 @@ class _FirstPageState extends State<FirstPage> {
   }
 }
 
-class NextPage extends StatelessWidget {
-  const NextPage({Key? key}) : super(key: key);
+// Docked FAB example
+class DockedFabPage extends StatefulWidget {
+  const DockedFabPage({Key? key}) : super(key: key);
+
+  @override
+  State<DockedFabPage> createState() => _DockedFabPageState();
+}
+
+class _DockedFabPageState extends State<DockedFabPage> {
+  final _key = GlobalKey<ExpandableFabState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('next'),
+      appBar: AppBar(title: const Text('Docked FAB')),
+      body: CounterWidget(),
+      floatingActionButtonLocation: ExpandableFab.docked,
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8.0,
+        child: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.home),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(Icons.person),
+              onPressed: () {},
+            ),
+            const Spacer(),
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(Icons.info),
+              onPressed: () {},
+            ),
+          ],
+        ),
       ),
-      body: const Center(
-        child: Text('next'),
+      floatingActionButton: ExpandableFab(
+        key: _key,
+        pos: ExpandableFabPos.center,
+        overlayStyle: ExpandableFabOverlayStyle(
+          color: Colors.black.withValues(alpha: 0.5),
+          blur: 5,
+        ),
+        onOpen: () => debugPrint('onOpen'),
+        afterOpen: () => debugPrint('afterOpen'),
+        onClose: () => debugPrint('onClose'),
+        afterClose: () => debugPrint('afterClose'),
+        children: [
+          FloatingActionButton.small(
+            heroTag: null,
+            child: const Icon(Icons.edit),
+            onPressed: () {
+              const snackBar = SnackBar(content: Text('Edit pressed'));
+              scaffoldKey.currentState?.showSnackBar(snackBar);
+            },
+          ),
+          FloatingActionButton.small(
+            heroTag: null,
+            child: const Icon(Icons.search),
+            onPressed: () {
+              const snackBar = SnackBar(content: Text('Search pressed'));
+              scaffoldKey.currentState?.showSnackBar(snackBar);
+            },
+          ),
+          FloatingActionButton.small(
+            heroTag: null,
+            child: const Icon(Icons.share),
+            onPressed: () {
+              final state = _key.currentState;
+              if (state != null) {
+                debugPrint('isOpen:${state.isOpen}');
+                state.toggle();
+              }
+            },
+          ),
+        ],
       ),
     );
   }

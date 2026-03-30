@@ -38,8 +38,11 @@ class FloatingActionButtonBuilder {
   /// - [context]: The build context.
   /// - [onPressed]: A callback that will be executed when the FAB is pressed.
   /// - [progress]: Animation representing the expansion and contraction of the FAB.
-  final Widget Function(BuildContext context, VoidCallback? onPressed,
-      Animation<double> progress) builder;
+  final Widget Function(
+    BuildContext context,
+    VoidCallback? onPressed,
+    Animation<double> progress,
+  ) builder;
 
   /// The size of the FAB. Used for position calculations and animations.
   final double size;
@@ -66,8 +69,11 @@ class DefaultFloatingActionButtonBuilder extends FloatingActionButtonBuilder {
     this.child,
   }) : super(
           size: _actualSize(fabSize),
-          builder: (BuildContext context, VoidCallback? onPressed,
-              Animation<double> progress) {
+          builder: (
+            BuildContext context,
+            VoidCallback? onPressed,
+            Animation<double> progress,
+          ) {
             var func = FloatingActionButton.small;
             switch (fabSize) {
               case ExpandableFabSize.large:
@@ -136,8 +142,11 @@ class RotateFloatingActionButtonBuilder extends FloatingActionButtonBuilder {
     this.angle = math.pi / 2,
   }) : super(
           size: _actualSize(fabSize),
-          builder: (BuildContext context, VoidCallback? onPressed,
-              Animation<double> progress) {
+          builder: (
+            BuildContext context,
+            VoidCallback? onPressed,
+            Animation<double> progress,
+          ) {
             return AnimatedBuilder(
               animation: progress,
               builder: (context, _) {
