@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import '../flutter_expandable_fab.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The type of behavior of this widget.
 enum ExpandableFabType { fan, up, side }
