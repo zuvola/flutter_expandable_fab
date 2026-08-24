@@ -1,3 +1,11 @@
+## 3.0.0
+- **BREAKING**: Migrated from `package:flutter/material.dart` to `package:material_ui/material_ui.dart`.
+  Consumers must migrate to `package:material_ui` as well; `ExpandableFab.location` now returns a
+  `material_ui` `FloatingActionButtonLocation`, which is not assignable to the SDK `Scaffold`.
+- **BREAKING**: Raised minimum constraints to Dart `>=3.12.0` and Flutter `>=3.44.0`, as required by
+  `material_ui 1.0.0`.
+- Apps still using `package:flutter/material.dart` should remain on `2.5.x`.
+
 ## 2.5.2
 - Removed unnecessary Timer and ready flag logic from ExpandableFab.
 - Ensured AnimationController and CurvedAnimation are only created in initState and not recreated.
