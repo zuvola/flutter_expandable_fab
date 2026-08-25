@@ -3,6 +3,22 @@ import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  Widget buildInitiallyOpenFab(double distance, Offset childrenOffset) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Container(),
+        floatingActionButtonLocation: ExpandableFab.location,
+        floatingActionButton: ExpandableFab(
+          pos: ExpandableFabPos.right,
+          initialOpen: true,
+          childrenOffset: childrenOffset,
+          distance: distance,
+          children: const [Placeholder()],
+        ),
+      ),
+    );
+  }
+
   testWidgets('callback', (WidgetTester tester) async {
     var callStack = [];
 
@@ -93,52 +109,37 @@ void main() {
     expect(openCenter, closeCenter);
   });
 
-  testWidgets('initialOpen, childrenOffset, distance',
-      (WidgetTester tester) async {
-    Widget build(ExpandableFabPos pos, double distance, Offset offset) {
-      return MaterialApp(
-        home: Scaffold(
-          body: Container(),
-          floatingActionButtonLocation: ExpandableFab.location,
-          floatingActionButton: ExpandableFab(
-            pos: pos,
-            initialOpen: true,
-            childrenOffset: offset,
-            distance: distance,
-            children: const [Placeholder()],
-          ),
-        ),
-      );
-    }
-
+  testWidgets('initialOpen, distance', (WidgetTester tester) async {
     // Distance: 100, Offset: 0
-    await tester.pumpWidget(build(ExpandableFabPos.right, 100, Offset.zero));
+    await tester.pumpWidget(buildInitiallyOpenFab(100, Offset.zero));
     await tester.pumpAndSettle();
 
-    ExpandableFabState state = tester.state(find.byType(ExpandableFab));
+    final ExpandableFabState state = tester.state(find.byType(ExpandableFab));
     expect(state.isOpen, true);
 
     // Center: (756, 556)
     // CloseButtonSize: 40
     // 756 + 40 / 2 = 776
     // 556 + 40 / 2 - 100 = 476
-    var child = find.byType(Placeholder).first;
-    var br = tester.getBottomRight(child);
+    final child = find.byType(Placeholder).first;
+    final br = tester.getBottomRight(child);
     expect(br.dx.round(), 776.0);
     expect(br.dy.round(), 476.0);
+  });
 
-    // Distance: 100, Offset: (10, 20)
-    await tester.pumpWidget(build(
-      ExpandableFabPos.right,
-      200,
-      const Offset(10, 20),
-    ));
-    await tester.pump(const Duration(milliseconds: 50));
+  testWidgets('initialOpen, childrenOffset, distance',
+      (WidgetTester tester) async {
+    // Distance: 200, Offset: (10, 20)
+    await tester.pumpWidget(buildInitiallyOpenFab(200, const Offset(10, 20)));
+    await tester.pumpAndSettle();
+
+    final ExpandableFabState state = tester.state(find.byType(ExpandableFab));
+    expect(state.isOpen, true);
 
     // 756 + 40 / 2 - 10 = 766
     // 556 + 40 / 2 - 200 - 20 = 356
-    child = find.byType(Placeholder).first;
-    br = tester.getBottomRight(child);
+    final child = find.byType(Placeholder).first;
+    final br = tester.getBottomRight(child);
     expect(br.dx.round(), 766.0);
     expect(br.dy.round(), 356.0);
   });

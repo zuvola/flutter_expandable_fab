@@ -1,4 +1,4 @@
-library flutter_expandable_fab;
+library;
 
 export 'src/action_button_builder.dart';
 export 'src/expandable_fab.dart';
