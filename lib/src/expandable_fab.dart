@@ -73,6 +73,7 @@ class ExpandableFab extends StatefulWidget {
     this.childrenOffset = Offset.zero,
     required this.children,
     this.onOpen,
+    this.shouldOpen,
     this.afterOpen,
     this.onClose,
     this.afterClose,
@@ -119,6 +120,9 @@ class ExpandableFab extends StatefulWidget {
 
   /// Will be called before opening the menu.
   final VoidCallback? onOpen;
+
+  /// Return `true` to open the menu, or `false` to prevent opening.
+  final bool Function()? shouldOpen;
 
   /// Will be called after opening the menu.
   final VoidCallback? afterOpen;
@@ -186,6 +190,10 @@ class ExpandableFabState extends State<ExpandableFab>
   void toggle() {
     if (_controller.isAnimating) return;
     if (_controller.value == 0.0) {
+      if (widget.shouldOpen != null) {
+        final shouldOpen = widget.shouldOpen!.call();
+        if (!shouldOpen) return;
+      }
       widget.onOpen?.call();
       _controller.forward().then((_) {
         widget.afterOpen?.call();
@@ -198,9 +206,19 @@ class ExpandableFabState extends State<ExpandableFab>
     }
   }
 
+  void open() {
+    if (_controller.value == 0.0) {
+      _controller.forward().then((_) {
+        widget.afterOpen?.call();
+      });
+    }
+  }
+
   void close() {
     if (_controller.value != 0.0) {
-      _controller.reverse();
+      _controller.reverse().then((_) {
+        widget.afterClose?.call();
+      });
     }
   }
 
